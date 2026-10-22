@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>DeepPCBStation.Core.Tests</RootNamespace>
+    <AssemblyName>DeepPCBStation.Core.Tests</AssemblyName>
+    <!-- 测试工程不产出独立部署；随 Core 的 Halcon 条件编译，无 SDK 时用 Stub 路径 -->
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- 与 Core 同条件：有 HALCONROOT 时才定义 USE_HALCON，
+       使量测精度用例在有 SDK 的环境生效、在无 SDK 的环境自动跳过 -->
+  <PropertyGroup Condition="'$(HALCONROOT)' != ''">
+    <DefineConstants>$(DefineConstants);USE_HALCON</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <!-- M3：xunit v2 无运行时 Skip（Assert.Skip / SkipException 需 v3），
+         用 SkippableFact 提供 [SkippableFact]/Skip.If，使 Halcon 用例在任何环境
+         都进入计数、无 SDK 时显式标记 Skipped 而不是「编译期消失」。仅测试期依赖。 -->
+    <PackageReference Include="Xunit.SkippableFact" Version="1.5.23" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Microsoft.Data.Sqlite 的 native e_sqlite3.dll 位于输出目录 runtimes/win-x64/native，
+         默认按程序集基目录解析；xunit 的 shadow copy 会把基目录换到 Temp 下导致加载失败
+         （Library e_sqlite3 not found）。关掉 shadow copy 后存储层测试才能跑。 -->
+    <None Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DeepPCBStation.Core\DeepPCBStation.Core.csproj" />
+  </ItemGroup>
+
+</Project>

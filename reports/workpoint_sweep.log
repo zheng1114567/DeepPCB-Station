@@ -1,0 +1,6 @@
+RESULT d26_m22 dt=26 ma=22 | strictF1=94.80 mAP11=87.16 TP=6473 | ignF1=97.36 ignMAP11=90.52 ignTP=6648 pred=6783 gt=6873 zeroOvl=102 | 281s
+RESULT d30_m18 dt=30 ma=18 | strictF1=94.95 mAP11=87.31 TP=6478 | ignF1=97.53 ignMAP11=90.59 ignTP=6654 pred=6772 gt=6873 zeroOvl=107 | 281s
+RESULT d30_m26 dt=30 ma=26 | strictF1=94.75 mAP11=87.23 TP=6448 | ignF1=97.24 ignMAP11=90.57 ignTP=6618 pred=6738 gt=6873 zeroOvl=130 | 282s
+RESULT d34_m22 dt=34 ma=22 | strictF1=94.91 mAP11=87.28 TP=6468 | ignF1=97.48 ignMAP11=90.60 ignTP=6643 pred=6757 gt=6873 zeroOvl=114 | 281s
+RESULT d27_m18 dt=27 ma=18 | strictF1=94.85 mAP11=87.19 TP=6479 | ignF1=97.45 ignMAP11=90.54 ignTP=6656 pred=6788 gt=6873 zeroOvl=101 | 285s
+RESULT d33_m26 dt=33 ma=26 | strictF1=94.73 mAP11=87.22 TP=6446 | ignF1=97.24 ignMAP11=90.57 ignTP=6617 pred=6736 gt=6873 zeroOvl=132 | 282s

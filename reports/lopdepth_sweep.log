@@ -1,0 +1,6 @@
+RESULT lds_off lopDepthSkip=0 | strictF1=94.93 mAP11=87.28 TP=6472 | ignF1=97.48 ignMAP11=90.59 ignTP=6646 pred=6762 zeroOvl=110 | 278s
+RESULT lds2 lopDepthSkip=2 | strictF1=94.83 mAP11=88.50 TP=6514 | ignF1=97.38 ignMAP11=90.50 ignTP=6689 pred=6865 zeroOvl=68 | 277s
+RESULT lds3 lopDepthSkip=3 | strictF1=94.83 mAP11=88.50 TP=6514 | ignF1=97.38 ignMAP11=90.50 ignTP=6689 pred=6865 zeroOvl=68 | 277s
+RESULT lds4 lopDepthSkip=4 | strictF1=94.96 mAP11=88.57 TP=6494 | ignF1=97.52 ignMAP11=90.56 ignTP=6669 pred=6804 zeroOvl=87 | 279s
+RESULT lds5 lopDepthSkip=5 | strictF1=94.97 mAP11=87.21 TP=6486 | ignF1=97.53 ignMAP11=90.57 ignTP=6661 pred=6786 zeroOvl=95 | 278s
+RESULT lds6 lopDepthSkip=6 | strictF1=94.99 mAP11=87.28 TP=6480 | ignF1=97.54 ignMAP11=90.58 ignTP=6654 pred=6771 zeroOvl=101 | 277s

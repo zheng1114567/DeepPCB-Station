@@ -1,0 +1,634 @@
+<Window x:Class="DeepPCBStation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="{Binding TitleText}"
+        Icon="pack://application:,,,/Assets/app.ico"
+        Height="860" Width="1360"
+        MinHeight="720" MinWidth="1180"
+        Background="{StaticResource BgBrush}"
+        Foreground="{StaticResource FgBrush}"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Microsoft YaHei UI, SimSun, Segoe UI"
+        TextOptions.TextFormattingMode="Display"
+        UseLayoutRounding="True"
+        StateChanged="Window_StateChanged">
+  <shell:WindowChrome.WindowChrome>
+    <shell:WindowChrome CaptionHeight="30" ResizeBorderThickness="5"
+                        GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+  </shell:WindowChrome.WindowChrome>
+
+  <Border x:Name="RootFrame" BorderBrush="#5C6873" BorderThickness="1">
+  <Grid x:Name="Root">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="30"/>   <!-- 标题栏 -->
+      <RowDefinition Height="Auto"/> <!-- 菜单栏 -->
+      <RowDefinition Height="40"/>   <!-- 工具栏 -->
+      <RowDefinition Height="34"/>   <!-- 状态灯条 -->
+      <RowDefinition Height="*"/>    <!-- 主体 -->
+      <RowDefinition Height="158"/>  <!-- 底部页签 -->
+      <RowDefinition Height="24"/>   <!-- 状态栏 -->
+    </Grid.RowDefinitions>
+
+    <!-- ============ 标题栏 ============ -->
+    <Border Grid.Row="0" Background="{StaticResource TitleBarBrush}" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Margin="10,0,0,0" VerticalAlignment="Center"
+                   Foreground="{StaticResource TitleFgBrush}" FontSize="12"
+                   Text="{Binding TitleText}" TextTrimming="CharacterEllipsis"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top"
+                    shell:WindowChrome.IsHitTestVisibleInChrome="True">
+          <Button Content="—" Style="{StaticResource TitleButton}" Click="TitleMin_Click" ToolTip="最小化"/>
+          <Button Content="□" Style="{StaticResource TitleButton}" Click="TitleMax_Click" ToolTip="最大化/还原"/>
+          <Button Content="×" Style="{StaticResource TitleCloseButton}" Click="TitleClose_Click" ToolTip="关闭"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ============ 菜单栏 ============ -->
+    <Menu Grid.Row="1" Padding="2,0">
+      <MenuItem Header="文件(_F)">
+        <MenuItem Header="注销当前用户(_L)" Command="{Binding LogoutCommand}"/>
+        <Separator/>
+        <MenuItem Header="退出系统(_X)" Click="MenuExit_Click"/>
+      </MenuItem>
+      <MenuItem Header="视图(_V)">
+        <MenuItem Header="刷新当前页(_R)" Click="MenuRefresh_Click"/>
+        <MenuItem Header="全屏切换" InputGestureText="F11" Click="MenuFullscreen_Click"/>
+      </MenuItem>
+      <MenuItem Header="运行(_R)">
+        <MenuItem Header="单次检测" InputGestureText="F5" Click="MenuInspectOnce_Click"/>
+        <MenuItem Header="连续运行" InputGestureText="F6" Click="MenuStartContinuous_Click"/>
+        <MenuItem Header="停止" InputGestureText="Esc" Click="MenuStop_Click"/>
+        <Separator/>
+        <MenuItem Header="确认换型(_C)" Click="MenuConfirmChangeover_Click"/>
+        <MenuItem Header="打开结果目录(_O)" Click="MenuOpenResults_Click"/>
+      </MenuItem>
+      <MenuItem Header="定位(_P)">
+        <MenuItem Header="运行监控" Click="MenuGotoRun_Click"/>
+        <MenuItem Header="检测历史" Click="MenuGotoHistory_Click"/>
+        <MenuItem Header="统计报表" Click="MenuGotoStats_Click"/>
+        <MenuItem Header="配方管理" Click="MenuGotoRecipe_Click"/>
+      </MenuItem>
+      <MenuItem Header="帮助(_H)">
+        <MenuItem Header="关于(_A)" Click="MenuAbout_Click"/>
+      </MenuItem>
+    </Menu>
+
+    <!-- ============ 工具栏 ============ -->
+    <Border Grid.Row="2" Background="{StaticResource ToolBarBrush}"
+            BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0,0,0,1">
+      <Grid Margin="6,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+          <Button Style="{StaticResource ToolButtonPrimary}" Command="{Binding Run.InspectOnceCommand}"
+                  IsEnabled="{Binding Run.CanInspect}" Content="单次检测  F5"
+                  ToolTip="换型未确认、工位被占用或正在检测时不可开检"/>
+          <Button Style="{StaticResource ToolButton}" Margin="4,0,0,0"
+                  Command="{Binding Run.StartContinuousCommand}" IsEnabled="{Binding Run.CanInspect}"
+                  Content="连续运行  F6"/>
+          <Button Style="{StaticResource ToolButtonDanger}" Margin="4,0,0,0"
+                  Command="{Binding Run.StopCommand}" IsEnabled="{Binding Run.IsRunning}"
+                  Content="停止  Esc"/>
+          <Border Style="{StaticResource VLine}"/>
+          <Button Style="{StaticResource ToolButton}" Content="复位视图" Click="ToolResetView_Click"
+                  ToolTip="把图像缩放/平移复位到 1:1"/>
+          <Button Style="{StaticResource ToolButton}" Margin="4,0,0,0" Content="打开结果目录"
+                  Click="MenuOpenResults_Click"/>
+          <Border Style="{StaticResource VLine}"/>
+          <Button Style="{StaticResource ToolButton}" Content="复判" Click="MenuGotoHistory_Click"
+                  ToolTip="转到检测历史，对可疑记录做人工复判"/>
+          <Button Style="{StaticResource ToolButton}" Margin="4,0,0,0" Content="导出报表"
+                  Click="MenuGotoStats_Click"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="配方" Style="{StaticResource LampLabel}" Margin="0,0,6,0"/>
+          <ComboBox Width="240" Height="28" ItemsSource="{Binding Run.RecipeOptions}"
+                    SelectedValue="{Binding Run.SelectedRecipeId}" SelectedValuePath="Id"
+                    IsEnabled="{Binding Run.IsIdle}" ToolTip="切换配方会使换型确认失效">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Display}" TextTrimming="CharacterEllipsis"/>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <Button Style="{StaticResource ToolButtonPrimary}" Margin="6,0,0,0"
+                  Content="确认换型" Command="{Binding Run.ConfirmChangeoverCommand}"
+                  IsEnabled="{Binding Run.IsIdle}"/>
+          <Border Style="{StaticResource VLine}"/>
+          <TextBlock Text="操作员" Style="{StaticResource LampLabel}" Margin="0,0,6,0"/>
+          <TextBlock Text="{Binding UserText}" Style="{StaticResource LampValue}" MinWidth="96"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ============ 状态灯条 ============ -->
+    <Border Grid.Row="3" Background="{StaticResource LampStripBrush}"
+            BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0,0,0,1" Padding="10,0">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
+          <Border Style="{StaticResource Lamp}" Background="{StaticResource OkBrush}"/>
+          <TextBlock Text="相机" Style="{StaticResource LampLabel}" Margin="7,0,0,0"/>
+          <TextBlock Text="{Binding Run.CameraText}" Style="{StaticResource LampValue}" Margin="5,0,0,0"/>
+        </StackPanel>
+        <Border Width="1" Height="20" Margin="0,0,16,0" Background="{StaticResource PanelBorderBrush}"/>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
+          <Border Style="{StaticResource Lamp}" Background="{StaticResource LampOffBrush}"/>
+          <TextBlock Text="光源" Style="{StaticResource LampLabel}" Margin="7,0,0,0"/>
+          <TextBlock Text="未接入" Style="{StaticResource LampValue}" Margin="5,0,0,0"/>
+        </StackPanel>
+        <Border Width="1" Height="20" Margin="0,0,16,0" Background="{StaticResource PanelBorderBrush}"/>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
+          <Border Style="{StaticResource Lamp}">
+            <Border.Background>
+              <Binding Path="Run.TcpLampBrush"/>
+            </Border.Background>
+          </Border>
+          <TextBlock Text="PLC" Style="{StaticResource LampLabel}" Margin="7,0,0,0"/>
+          <TextBlock Text="{Binding Run.TcpStateText}" Style="{StaticResource LampValue}" Margin="5,0,0,0"/>
+        </StackPanel>
+        <Border Width="1" Height="20" Margin="0,0,16,0" Background="{StaticResource PanelBorderBrush}"/>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
+          <Border>
+            <Border.Style>
+              <Style TargetType="Border" BasedOn="{StaticResource Lamp}">
+                <Setter Property="Background" Value="{StaticResource OkBrush}"/>
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Run.IsStationBusy}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource WarnBrush}"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+          </Border>
+          <TextBlock Text="触发权" Style="{StaticResource LampLabel}" Margin="7,0,0,0"/>
+          <TextBlock Text="{Binding Run.StationBusyText}" Style="{StaticResource LampValue}" Margin="5,0,0,0"/>
+        </StackPanel>
+        <Border Width="1" Height="20" Margin="0,0,16,0" Background="{StaticResource PanelBorderBrush}"/>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
+          <Border>
+            <Border.Style>
+              <Style TargetType="Border" BasedOn="{StaticResource Lamp}">
+                <Setter Property="Background" Value="{StaticResource OkBrush}"/>
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Run.HasStorageIssue}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource NgBrush}"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+          </Border>
+          <TextBlock Text="存储" Style="{StaticResource LampLabel}" Margin="7,0,0,0"/>
+          <TextBlock Text="正常" Margin="5,0,0,0">
+            <TextBlock.Style>
+              <Style TargetType="TextBlock" BasedOn="{StaticResource LampValue}">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Run.HasStorageIssue}" Value="True">
+                    <Setter Property="Text" Value="异常"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </TextBlock.Style>
+          </TextBlock>
+        </StackPanel>
+        <Border Width="1" Height="20" Margin="0,0,16,0" Background="{StaticResource PanelBorderBrush}"/>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,16,0" VerticalAlignment="Center">
+          <Border>
+            <Border.Style>
+              <Style TargetType="Border" BasedOn="{StaticResource Lamp}">
+                <Setter Property="Background" Value="{StaticResource WarnBrush}"/>
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ChangeoverChip}" Value="换型已确认">
+                    <Setter Property="Background" Value="{StaticResource OkBrush}"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+          </Border>
+          <TextBlock Text="换型" Style="{StaticResource LampLabel}" Margin="7,0,0,0"/>
+          <TextBlock Text="{Binding ChangeoverChip}" Style="{StaticResource LampValue}" Margin="5,0,0,0"/>
+        </StackPanel>
+        <Border Width="1" Height="20" Margin="0,0,16,0" Background="{StaticResource PanelBorderBrush}"/>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Border>
+            <Border.Style>
+              <Style TargetType="Border" BasedOn="{StaticResource Lamp}">
+                <Setter Property="Background" Value="{StaticResource LampOffBrush}"/>
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Run.IsRunning}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource OkBrush}"/>
+                  </DataTrigger>
+                  <DataTrigger Binding="{Binding Run.IsStopping}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource WarnBrush}"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+          </Border>
+          <TextBlock Text="运行" Style="{StaticResource LampLabel}" Margin="7,0,0,0"/>
+          <TextBlock Text="待机" Margin="5,0,0,0">
+            <TextBlock.Style>
+              <Style TargetType="TextBlock" BasedOn="{StaticResource LampValue}">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding Run.IsRunning}" Value="True">
+                    <Setter Property="Text" Value="运行中"/>
+                  </DataTrigger>
+                  <DataTrigger Binding="{Binding Run.IsStopping}" Value="True">
+                    <Setter Property="Text" Value="停止中"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </TextBlock.Style>
+          </TextBlock>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <!-- ============ 主体 ============ -->
+    <Grid Grid.Row="4">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="208"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- 左：设备与资源 -->
+      <Border Grid.Column="0" Background="{StaticResource SurfaceAltBrush}"
+              BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0,0,1,0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <Border Grid.Row="0" Style="{StaticResource PanelHead}">
+            <TextBlock Text="设备与资源" FontSize="11" FontWeight="SemiBold"
+                       Foreground="{StaticResource InkSoftBrush}" VerticalAlignment="Center"/>
+          </Border>
+
+          <StackPanel Grid.Row="1" Margin="0,4,0,0">
+            <Border Style="{StaticResource DeviceRow}">
+              <DockPanel VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Left" Text="▾ 工位" FontSize="12" Foreground="{StaticResource InkBrush}"/>
+                <TextBlock Text="{Binding StationText}" FontSize="10.5" HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+              </DockPanel>
+            </Border>
+            <Border Style="{StaticResource DeviceRow}" Padding="22,0,8,0">
+              <DockPanel VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Left" Text="相机" FontSize="12" Foreground="{StaticResource InkSoftBrush}"/>
+                <TextBlock Text="{Binding Run.CameraText}" FontSize="10.5" HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+              </DockPanel>
+            </Border>
+            <Border Style="{StaticResource DeviceRow}" Padding="22,0,8,0">
+              <DockPanel VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Left" Text="光源" FontSize="12" Foreground="{StaticResource InkSoftBrush}"/>
+                <TextBlock Text="未接入" FontSize="10.5" HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+              </DockPanel>
+            </Border>
+            <Border Style="{StaticResource DeviceRow}" Padding="22,0,8,0">
+              <DockPanel VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Left" Text="PLC" FontSize="12" Foreground="{StaticResource InkSoftBrush}"/>
+                <TextBlock Text="{Binding Run.TcpStateText}" FontSize="10.5" HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+              </DockPanel>
+            </Border>
+            <Border Style="{StaticResource DeviceRow}" Padding="22,0,8,0">
+              <DockPanel VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Left" Text="引擎" FontSize="12" Foreground="{StaticResource InkSoftBrush}"/>
+                <TextBlock Text="{Binding Run.EngineNameText}" FontSize="10.5" HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+              </DockPanel>
+            </Border>
+            <Border Style="{StaticResource DeviceRow}">
+              <DockPanel VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Left" Text="▸ 配方" FontSize="12" Foreground="{StaticResource InkBrush}"/>
+                <TextBlock Text="{Binding Run.SelectedRecipeId}" FontSize="10.5" HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" MaxWidth="110"/>
+              </DockPanel>
+            </Border>
+            <Border Style="{StaticResource DeviceRow}" Padding="22,0,8,0">
+              <DockPanel VerticalAlignment="Center">
+                <TextBlock DockPanel.Dock="Left" Text="换型" FontSize="12" Foreground="{StaticResource InkSoftBrush}"/>
+                <TextBlock Text="{Binding ChangeoverChip}" FontSize="10.5" HorizontalAlignment="Right"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" MaxWidth="110"/>
+              </DockPanel>
+            </Border>
+          </StackPanel>
+
+          <!-- 工位摘要 -->
+          <Border Grid.Row="2" BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0,1,0,0" Padding="8,6">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="配方 hash" Style="{StaticResource LampLabel}"/>
+              <TextBlock Grid.Row="0" Grid.Column="1" FontFamily="Consolas" FontSize="10.5"
+                         Foreground="{StaticResource InkBrush}" VerticalAlignment="Center"
+                         Text="{Binding Run.RecipeHashText}" MaxWidth="96" TextTrimming="CharacterEllipsis"/>
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="换型状态" Style="{StaticResource LampLabel}"/>
+              <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ChangeoverChip}" FontSize="10.5"
+                         FontWeight="SemiBold" VerticalAlignment="Center">
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource WarnBrush}"/>
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding ChangeoverChip}" Value="换型已确认">
+                        <Setter Property="Foreground" Value="{StaticResource OkBrush}"/>
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
+              <TextBlock Grid.Row="2" Grid.Column="0" Text="今日产量" Style="{StaticResource LampLabel}"/>
+              <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Run.TodayCount}" FontFamily="Consolas"
+                         FontSize="10.5" Foreground="{StaticResource InkBrush}" VerticalAlignment="Center"/>
+              <TextBlock Grid.Row="3" Grid.Column="0" Text="良率窗口" Style="{StaticResource LampLabel}"/>
+              <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Run.YieldText}" FontFamily="Consolas"
+                         FontSize="10.5" Foreground="{StaticResource InkBrush}" VerticalAlignment="Center"/>
+            </Grid>
+          </Border>
+        </Grid>
+      </Border>
+
+      <!-- 右：页面宿主 -->
+      <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" Margin="10"
+                      HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"/>
+    </Grid>
+
+    <!-- ============ 底部页签 ============ -->
+    <Border Grid.Row="5" BorderBrush="{StaticResource PanelBorderBrush}" BorderThickness="0,1,0,0">
+      <TabControl Background="#FFFFFF" BorderThickness="0" Padding="0">
+        <TabItem Header="运行消息">
+          <ListBox ItemsSource="{Binding Run.LogLines}" BorderThickness="0" Background="Transparent"
+                   FontFamily="Consolas" FontSize="11" Foreground="{StaticResource InkSoftBrush}"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled" Padding="6,3">
+            <ListBox.ItemContainerStyle>
+              <Style TargetType="ListBoxItem">
+                <Setter Property="Padding" Value="0"/>
+                <Setter Property="Margin" Value="0"/>
+                <Setter Property="MinHeight" Value="17"/>
+              </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </TabItem>
+
+        <TabItem Header="最近结果">
+          <Grid>
+            <TextBlock Text="暂无结果 · 开检后自动记录" FontSize="11" Foreground="{StaticResource MutedBrush}"
+                       HorizontalAlignment="Center" VerticalAlignment="Center">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Visibility" Value="Collapsed"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding Run.RecentResults.Count}" Value="0">
+                      <Setter Property="Visibility" Value="Visible"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+            <ItemsControl ItemsSource="{Binding Run.RecentResults}" Margin="6,3">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <DockPanel Margin="0,1">
+                    <Border DockPanel.Dock="Left" Width="3" Height="14" Background="{Binding VerdictBrush}"
+                            VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock DockPanel.Dock="Left" Text="{Binding Verdict}" FontWeight="Bold" Width="52"
+                               FontSize="11" Foreground="{Binding VerdictBrush}" VerticalAlignment="Center"/>
+                    <Button DockPanel.Dock="Right" Content="查看" Height="22" Padding="8,0" FontSize="10.5"
+                            VerticalAlignment="Center"
+                            Command="{Binding DataContext.Run.OpenRecentCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            CommandParameter="{Binding}"/>
+                    <TextBlock Text="{Binding Summary}" FontFamily="Consolas" FontSize="10.5"
+                               Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                  </DockPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Grid>
+        </TabItem>
+
+        <TabItem Header="统计">
+          <Grid Margin="10,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="120"/>
+              <ColumnDefinition Width="120"/>
+              <ColumnDefinition Width="120"/>
+              <ColumnDefinition Width="140"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Text="今日" Style="{StaticResource LampLabel}"/>
+              <TextBlock Text="{Binding Run.TodayCount}" FontFamily="Consolas" FontSize="18" FontWeight="Bold"
+                         Foreground="{StaticResource InkBrush}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+              <TextBlock Text="累计" Style="{StaticResource LampLabel}"/>
+              <TextBlock Text="{Binding Run.DbTotalCount}" FontFamily="Consolas" FontSize="18" FontWeight="Bold"
+                         Foreground="{StaticResource InkBrush}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="会话" Style="{StaticResource LampLabel}"/>
+              <TextBlock Text="{Binding Run.TotalCount}" FontFamily="Consolas" FontSize="18" FontWeight="Bold"
+                         Foreground="{StaticResource InkBrush}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="3">
+              <TextBlock Text="{Binding Run.YieldTitle}" Style="{StaticResource LampLabel}"/>
+              <TextBlock Text="{Binding Run.YieldText}" FontFamily="Consolas" FontSize="18" FontWeight="Bold"
+                         Foreground="{StaticResource AccentBrush}"/>
+            </StackPanel>
+            <TextBlock Grid.Column="4" Text="{Binding Run.StatusText}" FontSize="11"
+                       Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"/>
+          </Grid>
+        </TabItem>
+
+        <TabItem Header="报警">
+          <Grid Margin="10,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Text="{Binding AlarmMessageText}" FontSize="12" Foreground="{StaticResource InkBrush}"
+                         TextTrimming="CharacterEllipsis"/>
+              <TextBlock Text="{Binding AlarmAckError}" FontSize="11" Foreground="{StaticResource NgBrush}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+              <TextBlock Text="{Binding AlarmCountText}" FontSize="11" Foreground="{StaticResource MutedBrush}"
+                         VerticalAlignment="Center" Margin="0,0,10,0"/>
+              <Button Style="{StaticResource ToolButton}" Content="确认本条"
+                      Command="{Binding AckCurrentCommand}" IsEnabled="{Binding AlarmCanAck}"/>
+              <Button Style="{StaticResource ToolButton}" Content="全部确认" Margin="6,0,0,0"
+                      Command="{Binding AckAllAlarmsCommand}"
+                      IsEnabled="{Binding AlarmCanAckAll}"
+                      ToolTip="无可确认告警时置灰（空态）"/>
+              <Button Style="{StaticResource ToolButton}" Content="告警记录" Margin="6,0,0,0"
+                      Command="{Binding OpenAlarmsCommand}"/>
+            </StackPanel>
+          </Grid>
+        </TabItem>
+      </TabControl>
+    </Border>
+
+    <!-- ============ 状态栏 ============ -->
+    <Border Grid.Row="6" Background="{StaticResource BgBrush}"
+            BorderBrush="#A8B0B8" BorderThickness="0,1,0,0">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
+          <TextBlock Text="工位" Style="{StaticResource LampLabel}"/>
+          <TextBlock Text="{Binding StationText}" FontSize="11" Foreground="{StaticResource InkBrush}"
+                     FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Border Grid.Column="1" Width="1" Background="{StaticResource PanelBorderBrush}" Margin="0,4"/>
+
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
+          <TextBlock Text="操作员" Style="{StaticResource LampLabel}"/>
+          <TextBlock Text="{Binding UserText}" FontSize="11" Foreground="{StaticResource InkBrush}"
+                     FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Border Grid.Column="3" Width="1" Background="{StaticResource PanelBorderBrush}" Margin="0,4"/>
+
+        <StackPanel Grid.Column="4" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
+          <TextBlock Text="班次" Style="{StaticResource LampLabel}"/>
+          <TextBlock Text="{Binding ShiftText}" FontSize="11" Foreground="{StaticResource InkBrush}"
+                     FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"/>
+          <TextBlock Text="配方" Style="{StaticResource LampLabel}" Margin="14,0,0,0"/>
+          <TextBlock Text="{Binding RecipeText}" FontFamily="Consolas" FontSize="10.5"
+                     Foreground="{StaticResource InkBrush}" Margin="6,0,0,0" VerticalAlignment="Center"/>
+          <TextBlock Text="节拍" Style="{StaticResource LampLabel}" Margin="14,0,0,0"/>
+          <TextBlock Text="{Binding Run.BeatText}" FontFamily="Consolas" FontSize="10.5"
+                     Foreground="{StaticResource InkBrush}" Margin="6,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+        <Border Grid.Column="5" Width="1" Background="{StaticResource PanelBorderBrush}" Margin="0,4"/>
+
+        <StackPanel Grid.Column="6" Orientation="Horizontal" Margin="10,0" VerticalAlignment="Center">
+          <TextBlock Text="握手" Style="{StaticResource LampLabel}"/>
+          <TextBlock Text="{Binding Run.TcpInfo}" FontSize="10.5" Foreground="{StaticResource InkSoftBrush}"
+                     Margin="6,0,0,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+        </StackPanel>
+        <TextBlock Grid.Column="7" Text="{Binding ClockText}" FontFamily="Consolas" FontSize="10.5"
+                   Foreground="{StaticResource InkSoftBrush}" Margin="10,0" VerticalAlignment="Center"/>
+      </Grid>
+    </Border>
+
+    <!-- ============ 空闲锁屏遮罩 ============ -->
+    <Border Grid.Row="0" Grid.RowSpan="7" Background="{StaticResource BgBrush}">
+      <Border.Style>
+        <Style TargetType="Border">
+          <Setter Property="Visibility" Value="Collapsed"/>
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsLocked}" Value="True">
+              <Setter Property="Visibility" Value="Visible"/>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Border.Style>
+      <Border Style="{StaticResource Card}" Padding="36,28" Width="420"
+              VerticalAlignment="Center" HorizontalAlignment="Center">
+        <StackPanel>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                       Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+            <TextBlock Text="会话已锁定" FontSize="12.5" FontWeight="SemiBold"
+                       Foreground="{StaticResource InkSoftBrush}" Margin="7,0,0,0" VerticalAlignment="Center"/>
+          </StackPanel>
+
+          <TextBlock Text="{Binding LockClockText}" FontFamily="Consolas" FontSize="48"
+                     FontWeight="Light" Foreground="{StaticResource InkBrush}"
+                     HorizontalAlignment="Center" Margin="0,8,0,0"/>
+          <TextBlock Text="{Binding LockDateText}" FontSize="11.5" Foreground="{StaticResource MutedBrush}"
+                     HorizontalAlignment="Center" Margin="0,2,0,0"/>
+
+          <Border Style="{StaticResource Hairline}" Margin="0,14,0,10"/>
+
+          <Grid Margin="0,0,0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="工位" Style="{StaticResource MicroLabel}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding LockStationText}" FontFamily="Consolas" FontSize="11"
+                       Foreground="{StaticResource InkSoftBrush}" Margin="10,0,0,0"
+                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+          </Grid>
+          <Grid Margin="0,0,0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="产量" Style="{StaticResource MicroLabel}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding LockTodayText}" FontSize="11"
+                       Foreground="{StaticResource InkSoftBrush}" Margin="10,0,0,0"
+                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+          </Grid>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="当前" Style="{StaticResource MicroLabel}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding LockUserText}" FontSize="11"
+                       Foreground="{StaticResource InkSoftBrush}" Margin="10,0,0,0"
+                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+          </Grid>
+
+          <TextBlock Text="输入当前账号密码解锁（检测仍在继续）" FontSize="11"
+                     Foreground="{StaticResource MutedBrush}" Margin="0,14,0,5"/>
+          <PasswordBox x:Name="UnlockPwd" Height="30" FontSize="13" KeyDown="UnlockPwd_KeyDown"/>
+          <TextBlock x:Name="UnlockError" Text="" FontSize="11" Foreground="{StaticResource NgBrush}"
+                     Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+          <Button Content="解 锁" Height="34" FontSize="13" Style="{StaticResource PrimaryButton}"
+                  Margin="0,10,0,0" Click="Unlock_Click"/>
+        </StackPanel>
+      </Border>
+    </Border>
+  </Grid>
+  </Border>
+</Window>

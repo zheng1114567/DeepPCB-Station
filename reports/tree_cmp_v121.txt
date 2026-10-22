@@ -1,0 +1,29 @@
+file=features_20261021_060322.tsv matched=6651
+
+===== 候选横评 =====
+  A deployed(split)                  err= 209 acc=0.9686 | open<->mb= 99 mb<->ph= 33 short<->spur= 30 spur<->cu= 24 | folds=[43, 44, 40, 50, 32]
+  B deployed+splitB(阈值不变)            err= 175 acc=0.9737 | open<->mb= 65 mb<->ph= 35 short<->spur= 32 spur<->cu= 24 | folds=[33, 39, 35, 44, 24]
+  C deployed+splitB(重调阈值)            err= 195 acc=0.9707 | open<->mb= 86 mb<->ph= 34 short<->spur= 31 spur<->cu= 24 | folds=[37, 39, 39, 48, 32]
+  D B重拟合折叠树                          err= 197 acc=0.9704 | open<->mb= 74 mb<->ph= 50 short<->spur= 31 spur<->cu= 24 | folds=[42, 48, 34, 48, 25]
+
+===== E. POS 双阈值网格（splitB，全量错误数） =====
+  最优 open_sp=0.42 mb_sp=0.1655 err=175
+  E deployed+splitB(网格 0.42/0.1655)  err= 175 acc=0.9737 | open<->mb= 65 mb<->ph= 34 short<->spur= 32 spur<->cu= 24 | folds=[32, 38, 36, 44, 25]
+
+===== E2. NEG short 阈值网格（splitB，全量错误数） =====
+  short_sp=0.0000 err=175
+  short_sp=0.0100 err=175
+  short_sp=0.0278 err=174
+  short_sp=0.0500 err=173
+  short_sp=0.0800 err=173
+  short_sp=0.1200 err=173
+  short_sp=0.1794 err=175
+
+===== 获胜候选混淆矩阵 =====
+  GT\Pred        open      short  mousebite       spur     copper    pinhole
+  OPEN           1211          0         40          1          0          3
+  SHORT             0        970          0         18         13          0
+  MOUSEBITE         25          0       1218          1          0         20
+  SPUR              0         14          1       1089          2          0
+  COPPER            0          0          0         22        979          0
+  PINHOLE           1          0         14          0          0       1009

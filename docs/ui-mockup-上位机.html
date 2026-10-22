@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>DeepPCB-Station · 上位机传统样式样张（设计稿，非运行界面）</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 18px;
+    background: #C8CCD0;
+    font-family: "Microsoft YaHei UI", "Microsoft YaHei", "SimSun", Tahoma, sans-serif;
+    font-size: 12px; color: #1C2126;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: Consolas, "Courier New", monospace; }
+
+  /* ============ 窗口 ============ */
+  .win {
+    width: 1360px; height: 860px; margin: 0 auto;
+    background: #EDEFF1;
+    border: 1px solid #6E7A85;
+    box-shadow: 0 6px 22px rgba(0,0,0,.28);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  /* 标题栏：平涂深钢蓝（禁渐变） */
+  .titlebar {
+    height: 30px; flex: 0 0 30px;
+    background: #33465C; color: #fff;
+    display: flex; align-items: center; padding: 0 4px 0 10px;
+    font-size: 12px; letter-spacing: .2px;
+  }
+  .titlebar .t { flex: 1; }
+  .titlebar .btn {
+    width: 34px; height: 22px; line-height: 21px; text-align: center;
+    color: #E8EDF2; font-size: 12px;
+  }
+  .titlebar .btn.close { background: #B3261E; color: #fff; }
+
+  /* 菜单栏 */
+  .menubar {
+    height: 24px; flex: 0 0 24px; background: #F0F1F3;
+    border-bottom: 1px solid #C9CFD5;
+    display: flex; align-items: center; padding-left: 6px;
+  }
+  .menubar span { padding: 0 11px; line-height: 24px; color: #1C2126; }
+  .menubar span u { text-decoration: underline; text-underline-offset: 2px; }
+
+  /* 工具栏 */
+  .toolbar {
+    height: 40px; flex: 0 0 40px; background: #F4F5F7;
+    border-bottom: 1px solid #C9CFD5;
+    display: flex; align-items: center; padding: 0 6px; gap: 4px;
+  }
+  .tbtn {
+    height: 30px; padding: 0 11px 0 9px;
+    border: 1px solid #C9CFD5; background: #FBFBFC;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #1C2126; cursor: default;
+    white-space: nowrap;
+  }
+  .tbtn:hover { background: #EAF2FB; border-color: #8FA6BE; }
+  .tbtn.primary { background: #2C5C8F; border-color: #24507D; color: #fff; font-weight: 600; }
+  .tbtn.danger  { background: #FBFBFC; border-color: #C9CFD5; color: #B3261E; }
+  .tbtn .ic { font-size: 11px; line-height: 1; }
+  .tsep { width: 1px; height: 24px; background: #C9CFD5; margin: 0 6px; }
+
+  .tb-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .tb-label { color: #5A626B; font-size: 11px; }
+  .combo {
+    height: 30px; width: 240px; border: 1px solid #C9CFD5; background: #fff;
+    display: flex; align-items: center; padding: 0 6px 0 8px; font-size: 12px;
+  }
+  .combo .val { flex: 1; }
+  .combo .arrow { color: #5A626B; font-size: 9px; }
+
+  /* 状态灯条 */
+  .lamps {
+    height: 34px; flex: 0 0 34px; background: #E7EAED;
+    border-bottom: 1px solid #C9CFD5;
+    display: flex; align-items: center; padding: 0 10px;
+  }
+  .lampwrap {
+    display: flex; align-items: center; gap: 7px;
+    padding: 0 16px 0 0; margin-right: 16px;
+    border-right: 1px solid #D3D8DD; height: 20px;
+  }
+  .lampwrap:last-child { border-right: 0; margin-right: 0; }
+  .lamp {
+    width: 12px; height: 12px; border: 1px solid rgba(0,0,0,.35);
+    display: inline-block;
+  }
+  .lamp.ok   { background: #17864A; }
+  .lamp.ng   { background: #B3261E; }
+  .lamp.warn { background: #B26B00; }
+  .lamp.off  { background: #AEB6BE; }
+  .lamptxt { font-size: 11px; color: #1C2126; }
+  .lampkv  { font-size: 11px; color: #3C444C; font-weight: 600; }
+
+  /* 主体 */
+  .body { flex: 1; display: flex; min-height: 0; }
+
+  /* 左：设备树 */
+  .side {
+    width: 208px; flex: 0 0 208px; background: #F7F8FA;
+    border-right: 1px solid #C9CFD5;
+    display: flex; flex-direction: column;
+  }
+  .panelhead {
+    height: 24px; background: #E9ECEF; border-bottom: 1px solid #C9CFD5;
+    display: flex; align-items: center; padding: 0 8px;
+    font-size: 11px; font-weight: 600; color: #3C444C;
+  }
+  .tree { padding: 4px 0; }
+  .tnode {
+    height: 24px; display: flex; align-items: center; gap: 5px;
+    padding: 0 8px; font-size: 12px; color: #1C2126;
+  }
+  .tnode .exp { width: 10px; color: #5A626B; font-size: 9px; }
+  .tnode.l1 { padding-left: 8px; font-weight: 600; }
+  .tnode.l2 { padding-left: 22px; }
+  .tnode.l3 { padding-left: 38px; color: #3C444C; }
+  .tnode.sel { background: #DCE7F5; border: 1px solid #A8BED6; }
+  .tnode .st { margin-left: auto; font-size: 10px; color: #5A626B; }
+  .sidefill { flex: 1; }
+  .sidebox { border-top: 1px solid #C9CFD5; padding: 6px 8px; background: #F1F3F5; }
+  .sidebox .row { display: flex; justify-content: space-between; height: 20px; align-items: center; font-size: 11px; }
+  .sidebox .k { color: #5A626B; }
+  .sidebox .v { color: #1C2126; font-weight: 600; }
+
+  /* 中：图像区 */
+  .center { flex: 1; display: flex; flex-direction: column; min-width: 0; background: #EDEFF1; }
+  .imgbar {
+    height: 28px; flex: 0 0 28px; background: #F0F2F4;
+    border-bottom: 1px solid #C9CFD5;
+    display: flex; align-items: center; padding: 0 6px; gap: 2px;
+  }
+  .imgbar { overflow: hidden; }
+  .ibtn {
+    height: 22px; padding: 0 7px; border: 1px solid transparent;
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px; color: #3C444C;
+    white-space: nowrap; flex: 0 0 auto;
+  }
+  .ibtn:hover { background: #E3EAF3; border-color: #A8BED6; }
+  .ibtn.on { background: #DCE7F5; border-color: #A8BED6; color: #1C3E63; font-weight: 600; }
+  .imgbar .sep { width: 1px; height: 16px; background: #C9CFD5; margin: 0 5px; }
+  .imgbar .right { margin-left: auto; font-size: 11px; color: #5A626B; }
+
+  .viewport {
+    flex: 1; margin: 8px; background: #333639; border: 1px solid #1F2224;
+    position: relative; overflow: hidden;
+  }
+  .viewport .hud {
+    position: absolute; left: 8px; bottom: 6px;
+    font-size: 11px; color: #D7DDE3; background: rgba(0,0,0,.42);
+    padding: 2px 7px; letter-spacing: .2px;
+  }
+  .viewport .zoom {
+    position: absolute; right: 8px; top: 6px;
+    font-size: 11px; color: #D7DDE3; background: rgba(0,0,0,.42); padding: 2px 7px;
+  }
+  .imgfoot {
+    height: 22px; flex: 0 0 22px; display: flex; align-items: center;
+    padding: 0 9px; gap: 16px; font-size: 11px; color: #5A626B;
+  }
+
+  /* 右：判定 + 缺陷表 */
+  .right {
+    width: 368px; flex: 0 0 368px; background: #EDEFF1;
+    border-left: 1px solid #C9CFD5; display: flex; flex-direction: column;
+  }
+  .verdict { padding: 8px; }
+  .lamps3 { display: flex; gap: 6px; }
+  .biglamp {
+    flex: 1; height: 44px; border: 1px solid rgba(0,0,0,.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 1px;
+  }
+  .bl-ok { background: #17864A; }
+  .bl-ng { background: #B3261E; }
+  .bl-off{ background: #AEB6BE; color: #2A3037; }
+  /* 未点亮：中性灰 + 深字（同一时刻只有一盏判定灯实底） */
+  .bl-idle { background: #C2C8CE; color: #2A3037; border-color: rgba(0,0,0,.32); }
+  .bigverdict {
+    margin-top: 7px; height: 30px; border: 1px solid #C9CFD5; background: #fff;
+    display: flex; align-items: center; padding: 0 9px; gap: 8px; font-size: 12px;
+  }
+  .bigverdict .res { font-size: 14px; font-weight: 700; color: #17864A; }
+  .bigverdict .sp { flex: 1; }
+  .bigverdict .kv { font-size: 11px; color: #5A626B; }
+
+  .gridwrap { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0 8px 8px; }
+  table.dg { width: 100%; border-collapse: collapse; font-size: 11px; background: #fff; table-layout: fixed; }
+  table.dg th {
+    background: #F0F2F4; border: 1px solid #C9CFD5; height: 24px;
+    font-weight: 600; color: #3C444C; font-size: 11px; text-align: center; padding: 0 4px;
+  }
+  table.dg td {
+    border: 1px solid #E3E7EB; height: 24px; padding: 0 5px; color: #1C2126;
+    white-space: nowrap; overflow: hidden;
+  }
+  table.dg td.n { text-align: right; font-family: Consolas, monospace; }
+  table.dg td.c { text-align: center; }
+  table.dg tbody tr:nth-child(even) td { background: #FAFBFC; }
+  table.dg tbody tr.sel td { background: #DCE7F5; }
+  .t-open { color: #B3261E; font-weight: 600; }
+  .t-bite { color: #A35F00; font-weight: 600; }
+  .t-other{ color: #6C3483; font-weight: 600; }
+  .empty { padding: 10px; font-size: 11px; color: #5A626B; background: #fff; border: 1px solid #E3E7EB; border-top: 0; }
+
+  /* 底部页签区 */
+  .tabs { height: 158px; flex: 0 0 158px; display: flex; flex-direction: column; border-top: 1px solid #C9CFD5; }
+  .tabstrip { height: 26px; flex: 0 0 26px; background: #E4E7EA; display: flex; align-items: flex-end; padding-left: 6px; }
+  .tab {
+    height: 22px; padding: 0 14px; margin-right: 2px;
+    border: 1px solid #C9CFD5; border-bottom: 0; background: #E9ECEF;
+    display: flex; align-items: center; font-size: 11px; color: #3C444C;
+  }
+  .tab.on { height: 26px; background: #FFFFFF; font-weight: 600; color: #1C2126; }
+  .tab .badge { margin-left: 6px; background: #B3261E; color: #fff; font-size: 9px; padding: 0 4px; line-height: 13px; }
+  .tabbody { flex: 1; background: #fff; border-top: 1px solid #C9CFD5; overflow: hidden; padding: 4px 8px; }
+  .log { font-family: Consolas, monospace; font-size: 11px; line-height: 17px; color: #2A3037; }
+  .log .ts { color: #6B747D; }
+  .log .lv-i { color: #1C5FA8; }
+  .log .lv-w { color: #A35F00; }
+  .log .lv-e { color: #B3261E; }
+
+  /* 状态栏（凹陷） */
+  .statusbar {
+    height: 24px; flex: 0 0 24px;
+    background: #EDEFF1; border-top: 1px solid #FFFFFF;
+    box-shadow: inset 0 1px 0 #A8B0B8;
+    display: flex; align-items: center; font-size: 11px; color: #2A3037;
+  }
+  .sb {
+    height: 24px; display: flex; align-items: center; gap: 6px;
+    padding: 0 9px; border-right: 1px solid #C9CFD5;
+  }
+  .sb:first-child { border-left: 0; }
+  .sb .k { color: #5A626B; }
+  .sb .v { font-weight: 600; }
+  .sb .v.mono { font-weight: 400; }
+  .sb.last { margin-left: auto; border-right: 0; }
+
+  .note {
+    width: 1360px; margin: 10px auto 0; font-size: 11px; color: #4A525A; line-height: 18px;
+  }
+  .note b { color: #1C2126; }
+</style>
+</head>
+<body>
+
+<div class="win">
+  <!-- 标题栏 -->
+  <div class="titlebar">
+    <div class="t">DeepPCB-Station &nbsp;·&nbsp; PCB AOI 工位 &nbsp;·&nbsp; EQP-01</div>
+    <div class="btn">—</div><div class="btn">□</div><div class="btn close">×</div>
+  </div>
+
+  <!-- 菜单栏 -->
+  <div class="menubar">
+    <span><u>文</u>件(F)</span>
+    <span><u>视</u>图(V)</span>
+    <span><u>运</u>行(R)</span>
+    <span><u>参</u>数(P)</span>
+    <span><u>工</u>具(T)</span>
+    <span><u>帮</u>助(H)</span>
+  </div>
+
+  <!-- 工具栏 -->
+  <div class="toolbar">
+    <div class="tbtn primary"><span class="ic">▶</span>单次检测<span style="font-weight:400;opacity:.75">F5</span></div>
+    <div class="tbtn"><span class="ic">◆</span>连续运行<span style="opacity:.6">F6</span></div>
+    <div class="tbtn danger"><span class="ic">■</span>停止<span style="opacity:.6">Esc</span></div>
+    <div class="tsep"></div>
+    <div class="tbtn"><span class="ic">↺</span>复位</div>
+    <div class="tbtn"><span class="ic">⇱</span>打开结果目录</div>
+    <div class="tsep"></div>
+    <div class="tbtn"><span class="ic">✎</span>复判</div>
+    <div class="tbtn"><span class="ic">▤</span>导出报表</div>
+
+    <div class="tb-right">
+      <span class="tb-label">配方</span>
+      <div class="combo"><span class="val mono">pcb_open_mousebite&nbsp; v0.9.8</span><span class="arrow">▼</span></div>
+      <div class="tbtn primary" style="background:#3B5A78;border-color:#33506B">确认换型</div>
+      <div class="tsep"></div>
+      <span class="tb-label">操作员</span>
+      <div class="tbtn" style="min-width:96px;justify-content:center">张伟 / 工程师</div>
+    </div>
+  </div>
+
+  <!-- 状态灯条 -->
+  <div class="lamps">
+    <div class="lampwrap"><span class="lamp ok"></span><span class="lamptxt">相机</span><span class="lampkv">就绪</span></div>
+    <div class="lampwrap"><span class="lamp ok"></span><span class="lamptxt">光源</span><span class="lampkv">正常</span></div>
+    <div class="lampwrap"><span class="lamp ok"></span><span class="lamptxt">PLC</span><span class="lampkv">握手 OK :9100</span></div>
+    <div class="lampwrap"><span class="lamp ok"></span><span class="lamptxt">触发权</span><span class="lampkv">UI 占用</span></div>
+    <div class="lampwrap"><span class="lamp ok"></span><span class="lamptxt">存储</span><span class="lampkv">正常 82%</span></div>
+    <div class="lampwrap"><span class="lamp warn"></span><span class="lamptxt">换型</span><span class="lampkv">未确认</span></div>
+    <div class="lampwrap"><span class="lamp off"></span><span class="lamptxt">运行</span><span class="lampkv">待机</span></div>
+  </div>
+
+  <!-- 主体 -->
+  <div class="body">
+    <!-- 左：设备树 -->
+    <div class="side">
+      <div class="panelhead">设备与资源</div>
+      <div class="tree">
+        <div class="tnode l1"><span class="exp">▾</span>EQP-01 工位</div>
+        <div class="tnode l2"><span class="exp">▾</span>相机 <span class="st">Basler acA640</span></div>
+        <div class="tnode l3"><span class="exp"></span>曝光 <span class="st">8.0 ms</span></div>
+        <div class="tnode l3"><span class="exp"></span>增益 <span class="st">1.0</span></div>
+        <div class="tnode l2"><span class="exp">▸</span>光源 <span class="st">环形 白</span></div>
+        <div class="tnode l2"><span class="exp">▾</span>PLC <span class="st">TCP :9100</span></div>
+        <div class="tnode l3"><span class="exp"></span>TRIG 输入 <span class="st">ON</span></div>
+        <div class="tnode l3"><span class="exp"></span>RESULT 输出 <span class="st">ON</span></div>
+        <div class="tnode l2 sel"><span class="exp">▸</span>配方 <span class="st">v0.9.8</span></div>
+        <div class="tnode l2"><span class="exp">▸</span>金标集 <span class="st">official 500</span></div>
+      </div>
+      <div class="sidefill"></div>
+      <div class="sidebox">
+        <div class="row"><span class="k">配方 hash</span><span class="v mono">6e6aeb62</span></div>
+        <div class="row"><span class="k">换型状态</span><span class="v" style="color:#A35F00">未确认</span></div>
+        <div class="row"><span class="k">今日产量</span><span class="v mono">1 248</span></div>
+        <div class="row"><span class="k">直通率</span><span class="v mono">97.4 %</span></div>
+      </div>
+    </div>
+
+    <!-- 中：图像 -->
+    <div class="center">
+      <div class="imgbar">
+        <div class="ibtn">适应窗口</div>
+        <div class="ibtn">1 : 1</div>
+        <div class="ibtn on">十字线</div>
+        <div class="ibtn">显示模板</div>
+        <div class="ibtn">显示差分</div>
+        <div class="ibtn">ROI 框选</div>
+        <div class="sep"></div>
+        <div class="ibtn">保存快照</div>
+        <div class="right">640 × 640 · 8 bit</div>
+      </div>
+
+      <div class="viewport">
+        <svg width="100%" height="100%" viewBox="0 0 640 500" preserveAspectRatio="xMidYMid meet">
+          <rect width="640" height="500" fill="#333639"/>
+          <!-- 板框 -->
+          <rect x="24" y="20" width="592" height="460" fill="#3A3D40" stroke="#5A5F63" stroke-width="1"/>
+          <!-- 铜走线（灰度） -->
+          <g fill="none" stroke="#9AA0A6" stroke-linecap="square">
+            <path d="M60 70 H240 V150 H420 V70 H580" stroke-width="9"/>
+            <path d="M60 130 H200 V240 H360 V130 H520 V210 H580" stroke-width="7"/>
+            <path d="M60 210 H150 V320 H300 V420 H470 V300 H580" stroke-width="11"/>
+            <path d="M80 260 H120 V380 H260" stroke-width="5"/>
+            <path d="M340 210 V330 H520 V410" stroke-width="6"/>
+            <path d="M110 340 H240 V440" stroke-width="6"/>
+            <path d="M380 360 H470 V450 H560" stroke-width="5"/>
+            <path d="M270 60 V110" stroke-width="4"/>
+            <path d="M470 250 V300" stroke-width="4"/>
+          </g>
+          <!-- 焊盘 -->
+          <g fill="#B4B9BE" stroke="#7C8186" stroke-width="1">
+            <rect x="226" y="56" width="28" height="28"/>
+            <rect x="406" y="56" width="28" height="28"/>
+            <rect x="186" y="226" width="26" height="26"/>
+            <rect x="346" y="116" width="26" height="26"/>
+            <rect x="286" y="406" width="26" height="26"/>
+            <rect x="456" y="286" width="26" height="26"/>
+            <circle cx="150" cy="210" r="13"/>
+            <circle cx="520" cy="210" r="12"/>
+          </g>
+          <!-- 十字线 -->
+          <g stroke="#7F8A94" stroke-width="1" opacity=".85">
+            <path d="M318 0 V500" stroke-dasharray="6 4"/>
+            <path d="M0 198 H640" stroke-dasharray="6 4"/>
+          </g>
+          <!-- 缺陷框：open 红 / mousebite 橙 / 其它紫 -->
+          <g>
+            <rect x="192" y="92" width="46" height="38" fill="none" stroke="#D93025" stroke-width="2"/>
+            <text x="192" y="86" fill="#FF8A80" font-size="11" font-family="Consolas">#1 open 0.94</text>
+
+            <rect x="352" y="214" width="34" height="44" fill="none" stroke="#E08A00" stroke-width="2"/>
+            <text x="352" y="208" fill="#FFC46B" font-size="11" font-family="Consolas">#2 mousebite 0.88</text>
+
+            <rect x="470" y="300" width="40" height="34" fill="none" stroke="#9B59B6" stroke-width="2"/>
+            <text x="470" y="294" fill="#D2A8E8" font-size="11" font-family="Consolas">#3 short 0.79</text>
+          </g>
+          <!-- ROI -->
+          <rect x="120" y="60" width="400" height="380" fill="none" stroke="#7FD1C4" stroke-width="1" stroke-dasharray="4 3" opacity=".75"/>
+        </svg>
+        <div class="zoom">缩放 100 %</div>
+        <div class="hud mono">X = 312&nbsp; Y = 198&nbsp; G = 182</div>
+      </div>
+
+      <div class="imgfoot">
+        <span>图像编号 <span class="mono">00041207</span></span>
+        <span>配方 <span class="mono">v0.9.8</span></span>
+        <span>引擎 Halcon</span>
+        <span>耗时 <span class="mono">413 ms</span></span>
+      </div>
+    </div>
+
+    <!-- 右：判定 + 缺陷表 -->
+    <div class="right">
+      <div class="verdict">
+        <div class="lamps3">
+          <div class="biglamp bl-idle">OK</div>
+          <div class="biglamp bl-ng">NG</div>
+          <div class="biglamp bl-idle">FAULT</div>
+        </div>
+        <div class="bigverdict">
+          <span class="res">NG</span>
+          <span style="font-size:12px;color:#3C444C">检出 3 处</span>
+          <span class="sp"></span>
+          <span class="kv">partId <span class="mono" style="color:#1C2126">P-20261021-0417</span></span>
+        </div>
+      </div>
+
+      <div class="gridwrap">
+        <div class="panelhead" style="border:1px solid #C9CFD5;border-bottom:0">缺陷明细</div>
+        <table class="dg">
+          <thead>
+            <tr>
+              <th style="width:28px">#</th>
+              <th style="width:66px">类型</th>
+              <th style="width:40px">X</th>
+              <th style="width:40px">Y</th>
+              <th style="width:34px">W</th>
+              <th style="width:34px">H</th>
+              <th style="width:46px">置信</th>
+              <th style="width:56px">终判</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="sel"><td class="c">1</td><td class="t-open">open</td><td class="n">466</td><td class="n">441</td><td class="n">11</td><td class="n">37</td><td class="n">0.94</td><td class="c" style="color:#B3261E;font-weight:600">NG</td></tr>
+            <tr><td class="c">2</td><td class="t-bite">mousebite</td><td class="n">352</td><td class="n">214</td><td class="n">34</td><td class="n">44</td><td class="n">0.88</td><td class="c" style="color:#B3261E;font-weight:600">NG</td></tr>
+            <tr><td class="c">3</td><td class="t-other">short</td><td class="n">470</td><td class="n">300</td><td class="n">40</td><td class="n">34</td><td class="n">0.79</td><td class="c" style="color:#B3261E;font-weight:600">NG</td></tr>
+            <tr><td class="c">4</td><td class="t-other">spur</td><td class="n">118</td><td class="n">266</td><td class="n">9</td><td class="n">24</td><td class="n">0.61</td><td class="c" style="color:#5A626B">待复判</td></tr>
+            <tr><td class="c">5</td><td class="t-other">pinhole</td><td class="n">521</td><td class="n">212</td><td class="n">8</td><td class="n">8</td><td class="n">0.57</td><td class="c" style="color:#5A626B">待复判</td></tr>
+            <tr><td class="c">6</td><td class="t-open">open</td><td class="n">96</td><td class="n">332</td><td class="n">14</td><td class="n">19</td><td class="n">0.52</td><td class="c" style="color:#5A626B">待复判</td></tr>
+            <tr><td class="c">7</td><td class="t-other">copper</td><td class="n">392</td><td class="n">108</td><td class="n">22</td><td class="n">18</td><td class="n">0.44</td><td class="c" style="color:#5A626B">待复判</td></tr>
+          </tbody>
+        </table>
+        <div class="empty">7 条候选：3 条终判 NG / 4 条待复判。</div>
+
+        <div class="panelhead" style="border:1px solid #C9CFD5;border-bottom:0;margin-top:8px">本次参数</div>
+        <table class="dg">
+          <thead>
+            <tr><th style="width:58%">参数</th><th style="width:42%">值</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>diffThreshold</td><td class="n">30</td></tr>
+            <tr><td>minBlobArea</td><td class="n">22</td></tr>
+            <tr><td>growBoxScale</td><td class="n">1.50</td></tr>
+            <tr><td>regionGrowDiff</td><td class="n">1</td></tr>
+            <tr><td>edgeExplainMin</td><td class="n">0.85</td></tr>
+            <tr><td>lopExplainMin</td><td class="n">0.98</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部页签 -->
+  <div class="tabs">
+    <div class="tabstrip">
+      <div class="tab on">运行消息</div>
+      <div class="tab">最近结果</div>
+      <div class="tab">统计</div>
+      <div class="tab">报警<span class="badge">2</span></div>
+    </div>
+    <div class="tabbody">
+      <div class="log"><span class="ts">00:54:58</span> <span class="lv-i">[INFO ]</span> 换型确认：pcb_open_mousebite v0.9.8 hash=6e6aeb62 操作员=张伟</div>
+      <div class="log"><span class="ts">00:55:01</span> <span class="lv-i">[INFO ]</span> PLC TRIG 收到，触发权 → PLC</div>
+      <div class="log"><span class="ts">00:55:02</span> <span class="lv-i">[INFO ]</span> 采图完成 640×640 8bit · 曝光 8.0ms</div>
+      <div class="log"><span class="ts">00:55:02</span> <span class="lv-i">[INFO ]</span> 配准：8 块位移场 中位增益 0.31 · 最大位移 2px</div>
+      <div class="log"><span class="ts">00:55:02</span> <span class="lv-w">[WARN ]</span> 边缘解释闸剪枝 41 个候选（其中 3 个转残核复核）</div>
+      <div class="log"><span class="ts">00:55:02</span> <span class="lv-i">[INFO ]</span> 检出 3 处（open 1 / mousebite 1 / short 1）耗时 413ms</div>
+      <div class="log"><span class="ts">00:55:02</span> <span class="lv-i">[INFO ]</span> 落库 id=20261021-005502-0417 verdict=NG operator=张伟 shift=A</div>
+    </div>
+  </div>
+
+  <!-- 状态栏 -->
+  <div class="statusbar">
+    <div class="sb"><span class="k">工位</span><span class="v">EQP-01</span></div>
+    <div class="sb"><span class="k">操作员</span><span class="v">张伟</span></div>
+    <div class="sb"><span class="k">班次</span><span class="v">A</span></div>
+    <div class="sb"><span class="k">配方</span><span class="v mono">v0.9.8 / 6e6aeb62</span></div>
+    <div class="sb"><span class="k">握手</span><span class="v">PLC OK · 9100 · RTT 0.4ms</span></div>
+    <div class="sb"><span class="k">节拍</span><span class="v mono">413 ms</span></div>
+    <div class="sb"><span class="k">队列</span><span class="v mono">0</span></div>
+    <div class="sb last"><span class="v mono">2026-10-21 00:55:04</span></div>
+  </div>
+</div>
+
+<div class="note">
+  <b>设计稿说明</b>：本页为《算法与上位机 UI 优化设计》配套样张，仅演示形态，不接任何运行时数据。要点：圆角一律 0、1px 硬边、双线凹陷状态栏；菜单栏 / 工具栏 / 状态灯条 / 设备树 / 图像 viewport / 缺陷表 / 页签 / 状态栏八段骨架；正文 12px、表格行高 24px、数字全部 Consolas 等宽；三灯 OK/NG/FAULT 实底白字，未判定为中性灰。<br>
+  <b>与现有界面的差别</b>：现界面是侧边栏 + 8px 圆角卡片 + 12px 胶囊 Chip 的 Web 仪表盘形态（违反 <span style="font-family:Consolas">SCOPE-UI</span> 第 4 条「按钮 ≤2px、无大胶囊」），本稿把圆角归零、KPI 大数字退场、信息密度对齐 WinForms 上位机。
+</div>
+
+</body>
+</html>

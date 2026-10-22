@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>DeepPCBStation.Core</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <!-- 有 HALCONROOT 且存在 halcondotnet.dll 时启用真引擎；优先 Framework 目录 -->
+  <PropertyGroup Condition="'$(HALCONROOT)' != ''">
+    <_HalconDll Condition="Exists('$(HALCONROOT)/bin/dotnet45/halcondotnet.dll')">$(HALCONROOT)/bin/dotnet45/halcondotnet.dll</_HalconDll>
+    <_HalconDll Condition="'$(_HalconDll)' == '' AND Exists('$(HALCONROOT)/bin/dotnet35/halcondotnet.dll')">$(HALCONROOT)/bin/dotnet35/halcondotnet.dll</_HalconDll>
+    <_HalconDll Condition="'$(_HalconDll)' == '' AND Exists('$(HALCONROOT)\bin\dotnet45\halcondotnet.dll')">$(HALCONROOT)\bin\dotnet45\halcondotnet.dll</_HalconDll>
+    <_HalconDll Condition="'$(_HalconDll)' == '' AND Exists('$(HALCONROOT)\bin\dotnet35\halcondotnet.dll')">$(HALCONROOT)\bin\dotnet35\halcondotnet.dll</_HalconDll>
+    <_HalconDll Condition="'$(_HalconDll)' == '' AND Exists('$(HALCONROOT)/bin/dotnetcore/halcondotnet.dll')">$(HALCONROOT)/bin/dotnetcore/halcondotnet.dll</_HalconDll>
+    <_HalconDll Condition="'$(_HalconDll)' == '' AND Exists('$(HALCONROOT)\bin\dotnetcore\halcondotnet.dll')">$(HALCONROOT)\bin\dotnetcore\halcondotnet.dll</_HalconDll>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(_HalconDll)' != ''">
+    <DefineConstants>$(DefineConstants);USE_HALCON</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(_HalconDll)' != ''">
+    <Reference Include="halcondotnet">
+      <HintPath>$(_HalconDll)</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- 缺 SDK 时**快速失败**：本项目检测引擎真依赖 HalconDotNet（不是可选插件），
+       缺 SDK 时原本会抛出 40+ 条 CS0246「找不到 HObject/HTuple」，看不出缺什么。
+       这里换成一句话说清缺什么、怎么装。注意：不要改成「静默回落 Stub」——
+       那样在没有 SDK 的机器上会跑出一组假框，反而能把人骗过去（评审结论 §5.2）。 -->
+  <Target Name="RequireHalconSdk" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(_HalconDll)' == ''"
+           Text="未找到 Halcon SDK：Core 的检测引擎依赖 HalconDotNet，当前无法构建。请安装 MVTec HALCON（本项目用 22.11）并设置环境变量 HALCONROOT，使其满足 %24(HALCONROOT)\bin\dotnet45\halcondotnet.dll 存在；或在已装 SDK 的环境构建。注意 --engine=Stub 只保证编译/冒烟，不代表本仓可以在无 SDK 环境下构建。" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.16.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.9" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,439 @@
+<UserControl x:Class="DeepPCBStation.Views.HistoryPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctrl="clr-namespace:DeepPCBStation.Controls">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- 筛选条 -->
+    <Border Grid.Row="0" Style="{StaticResource Card}" Padding="10,8">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <WrapPanel Grid.Column="0" VerticalAlignment="Center">
+          <StackPanel Orientation="Horizontal" Margin="0,0,14,4">
+            <TextBlock Text="日期" Style="{StaticResource MicroLabel}" Margin="0,0,6,0"/>
+            <DatePicker Width="136" SelectedDate="{Binding FromDate}" ToolTip="起始日期（空=不限）"/>
+            <TextBlock Text="—" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="6,0"/>
+            <DatePicker Width="136" SelectedDate="{Binding ToDate}" ToolTip="截止日期（空=不限）"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Margin="0,0,14,4">
+            <TextBlock Text="结果" Style="{StaticResource MicroLabel}" Margin="0,0,6,0"/>
+            <ComboBox Width="78" ItemsSource="{Binding VerdictItems}" SelectedIndex="{Binding VerdictIndex}"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Margin="0,0,14,4">
+            <TextBlock Text="缺陷类型" Style="{StaticResource MicroLabel}" Margin="0,0,6,0"/>
+            <ComboBox Width="104" ItemsSource="{Binding TypeCodeItems}" SelectedIndex="{Binding TypeCodeIndex}"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Horizontal" Margin="0,0,14,4">
+            <TextBlock Text="配方" Style="{StaticResource MicroLabel}" Margin="0,0,6,0"/>
+            <ComboBox Width="132" ItemsSource="{Binding RecipeItems}" SelectedIndex="{Binding RecipeIndex}"/>
+          </StackPanel>
+
+          <CheckBox Content="只看待复判" IsChecked="{Binding OnlyPendingReview}"
+                    Margin="0,0,14,4" VerticalAlignment="Center"
+                    ToolTip="只显示未终判的 OK / NG（故障与作废不计）"/>
+        </WrapPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+          <TextBlock Text="partId" Style="{StaticResource MicroLabel}" Margin="0,0,6,0"/>
+          <TextBox Width="96" Text="{Binding PartIdText, UpdateSourceTrigger=PropertyChanged}"/>
+          <Button Content="查询" Height="32" Padding="16,0" Margin="12,0,0,0" Style="{StaticResource PrimaryButton}"
+                  Command="{Binding QueryCommand}"/>
+          <Button Content="导出 CSV" Height="32" Padding="12,0" Margin="8,0,0,0"
+                  Command="{Binding ExportCsvCommand}" IsEnabled="{Binding CanExport}"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1" Margin="0,8,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1.55*"/>
+        <ColumnDefinition Width="12"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- 左：结果表 + 分页 -->
+      <Border Grid.Column="0" Style="{StaticResource Card}" Padding="0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <Border Grid.Row="0" Style="{StaticResource PanelHead}" Padding="8,0">
+            <Grid>
+              <TextBlock Text="检测记录" FontSize="11" FontWeight="SemiBold"
+                         Foreground="{StaticResource InkSoftBrush}" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding TotalText}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                         Style="{StaticResource MicroLabel}"/>
+            </Grid>
+          </Border>
+
+          <Grid Grid.Row="1">
+            <DataGrid ItemsSource="{Binding Rows}" SelectedItem="{Binding SelectedRow}"
+                      AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single"
+                      HorizontalScrollBarVisibility="Disabled">
+              <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                  <Setter Property="ToolTip" Value="{Binding Row.Id}"/>
+                </Style>
+              </DataGrid.RowStyle>
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="时间" Binding="{Binding TimeText}" Width="120">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="FontFamily" Value="Consolas"/>
+                      <Setter Property="FontSize" Value="11.5"/>
+                      <Setter Property="ToolTip" Value="{Binding TimeText}"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="结果" Binding="{Binding VerdictText}" Width="56">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="Foreground" Value="{Binding VerdictBrush}"/>
+                      <Setter Property="FontWeight" Value="Bold"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="缺陷" Binding="{Binding Row.DefectCount}" Width="48">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="TextAlignment" Value="Right"/>
+                      <Setter Property="FontFamily" Value="Consolas"/>
+                      <Setter Property="FontSize" Value="11.5"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="partId" Binding="{Binding Row.PartId}" Width="84"/>
+                <DataGridTextColumn Header="终判" Binding="{Binding FinalVerdictText}" Width="62">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="Foreground" Value="{Binding FinalVerdictBrush}"/>
+                      <Setter Property="FontWeight" Value="SemiBold"/>
+                      <Setter Property="ToolTip" Value="{Binding ReviewText}"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="操作员" Binding="{Binding OperatorText}" Width="74"/>
+                <DataGridTextColumn Header="配方" Binding="{Binding RecipeText}" Width="150">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                      <Setter Property="ToolTip" Value="{Binding RecipeText}"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="耗时 ms" Binding="{Binding ElapsedText}" Width="72">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="TextAlignment" Value="Right"/>
+                      <Setter Property="FontFamily" Value="Consolas"/>
+                      <Setter Property="FontSize" Value="11.5"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock Text="{Binding EmptyText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontSize="13" Foreground="{StaticResource MutedBrush}">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Visibility" Value="Collapsed"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasRows}" Value="False">
+                      <Setter Property="Visibility" Value="Visible"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </Grid>
+
+          <!-- 分页条 -->
+          <Border Grid.Row="2" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0" Padding="12,8">
+            <DockPanel LastChildFill="False">
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="每页" Style="{StaticResource MicroLabel}"/>
+                <ComboBox Width="72" Height="28" Margin="6,0,6,0"
+                          ItemsSource="{Binding PageSizeOptions}" SelectedItem="{Binding PageSize}"/>
+                <TextBlock Text="条" Style="{StaticResource MicroLabel}"/>
+                <Border Width="1" Height="14" Background="{StaticResource LineBrush}" Margin="12,0"/>
+                <TextBlock Text="{Binding PageSummaryText}" FontSize="11" FontWeight="SemiBold"
+                           Foreground="{StaticResource InkSoftBrush}" VerticalAlignment="Center"/>
+              </StackPanel>
+
+              <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Content="«" Style="{StaticResource PagerButton}" Command="{Binding FirstPageCommand}"
+                        IsEnabled="{Binding CanPrev}" ToolTip="首页"/>
+                <Button Content="‹" Style="{StaticResource PagerButton}" Command="{Binding PrevCommand}"
+                        IsEnabled="{Binding CanPrev}" ToolTip="上一页"/>
+                <ItemsControl ItemsSource="{Binding PageSlots}" Margin="4,0">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Button Content="{Binding Text}"
+                              Command="{Binding DataContext.GoToPageCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                              CommandParameter="{Binding Number}" ToolTip="跳转页码">
+                        <Button.Style>
+                          <Style TargetType="Button" BasedOn="{StaticResource PagerButton}">
+                            <Style.Triggers>
+                              <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                                <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                              </DataTrigger>
+                              <DataTrigger Binding="{Binding IsEllipsis}" Value="True">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+                                <Setter Property="ToolTip" Value="{x:Null}"/>
+                              </DataTrigger>
+                            </Style.Triggers>
+                          </Style>
+                        </Button.Style>
+                      </Button>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Button Content="›" Style="{StaticResource PagerButton}" Command="{Binding NextCommand}"
+                        IsEnabled="{Binding CanNext}" ToolTip="下一页"/>
+                <Button Content="»" Style="{StaticResource PagerButton}" Command="{Binding LastPageCommand}"
+                        IsEnabled="{Binding CanNext}" ToolTip="末页"/>
+              </StackPanel>
+            </DockPanel>
+          </Border>
+        </Grid>
+      </Border>
+
+      <!-- 右：详情 -->
+      <Border Grid.Column="2" Style="{StaticResource Card}" Padding="10,8">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <Border Grid.Row="0" Style="{StaticResource PanelHead}" Padding="8,0">
+            <Grid>
+              <TextBlock Text="记录详情" FontSize="11" FontWeight="SemiBold"
+                         Foreground="{StaticResource InkSoftBrush}" VerticalAlignment="Center"/>
+              <Button HorizontalAlignment="Right" Content="打开图片目录" Height="20" Padding="8,0"
+                      FontSize="10.5" Style="{StaticResource ImageToolButton}"
+                      Command="{Binding OpenImagesFolderCommand}" IsEnabled="{Binding HasDetail}"/>
+            </Grid>
+          </Border>
+
+          <Grid Grid.Row="1" Margin="0,8,0,0">
+            <!-- 空态 -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+              <StackPanel.Style>
+                <Style TargetType="StackPanel">
+                  <Setter Property="Visibility" Value="Collapsed"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasDetail}" Value="False">
+                      <Setter Property="Visibility" Value="Visible"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </StackPanel.Style>
+              <TextBlock Text="请选择左侧记录" FontSize="13" Foreground="{StaticResource MutedBrush}"
+                         HorizontalAlignment="Center"/>
+              <TextBlock Text="可查看叠图、原图与缺陷明细" FontSize="11" Margin="0,6,0,0"
+                         Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <Grid>
+              <Grid.Style>
+                <Style TargetType="Grid">
+                  <Setter Property="Visibility" Value="Visible"/>
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasDetail}" Value="False">
+                      <Setter Property="Visibility" Value="Collapsed"/>
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </Grid.Style>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1.3*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+
+              <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                <Border DockPanel.Dock="Right" Padding="8,2">
+                  <Border.Style>
+                    <Style TargetType="Border" BasedOn="{StaticResource Chip}">
+                      <Setter Property="Visibility" Value="Collapsed"/>
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding HasDetail}" Value="True">
+                          <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Border.Style>
+                  <StackPanel Orientation="Horizontal">
+                    <Ellipse Width="7" Height="7" Fill="{Binding DetailVerdictBrush}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="{Binding DetailVerdictText}" FontSize="11" FontWeight="SemiBold"
+                               Foreground="{Binding DetailVerdictBrush}" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Border>
+                <TextBlock Text="{Binding DetailHeader}" FontSize="11" FontFamily="Consolas"
+                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"
+                           TextTrimming="CharacterEllipsis" ToolTip="{Binding DetailHeader}"/>
+              </DockPanel>
+
+              <Border Grid.Row="1" Background="{StaticResource PreviewBgBrush}" BorderBrush="{StaticResource LineBrush}"
+                      BorderThickness="1" CornerRadius="0">
+                <ctrl:ZoomBorder>
+                  <Grid x:Name="OverlayHost">
+                    <Image x:Name="OverlayImg" Source="{Binding OverlayImage}" Stretch="Uniform"/>
+                    <Canvas x:Name="OverlayCanvas" IsHitTestVisible="False"/>
+                  </Grid>
+                </ctrl:ZoomBorder>
+              </Border>
+              <TextBlock Grid.Row="2" Text="叠图 · 选中缺陷高亮 · 滚轮缩放 / 双击复位" FontSize="10.5"
+                         Foreground="{StaticResource MutedBrush}" Margin="2,5,0,8"/>
+
+              <Border Grid.Row="3" Background="{StaticResource PreviewBgBrush}" BorderBrush="{StaticResource LineBrush}"
+                      BorderThickness="1" CornerRadius="0">
+                <ctrl:ZoomBorder>
+                  <Image Source="{Binding RawImage}" Stretch="Uniform"/>
+                </ctrl:ZoomBorder>
+              </Border>
+              <TextBlock Grid.Row="4" Text="原图 · 滚轮缩放 / 双击复位" FontSize="10.5"
+                         Foreground="{StaticResource MutedBrush}" Margin="2,5,0,8"/>
+
+              <StackPanel Grid.Row="5" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,2,0,6">
+                <Border Style="{StaticResource SectionMark}"/>
+                <TextBlock Text="缺陷明细" Style="{StaticResource SectionTitle}"/>
+              </StackPanel>
+              <DataGrid Grid.Row="6" ItemsSource="{Binding Defects}" SelectedItem="{Binding SelectedDefect}"
+                        AutoGenerateColumns="False" IsReadOnly="True" RowHeight="28"
+                        HorizontalScrollBarVisibility="Disabled">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="类型" Binding="{Binding TypeCode}" Width="*"/>
+                  <DataGridTextColumn Header="X px" Binding="{Binding X}" Width="58">
+                    <DataGridTextColumn.ElementStyle>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="TextAlignment" Value="Right"/>
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="FontSize" Value="11.5"/>
+                      </Style>
+                    </DataGridTextColumn.ElementStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Y px" Binding="{Binding Y}" Width="58">
+                    <DataGridTextColumn.ElementStyle>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="TextAlignment" Value="Right"/>
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="FontSize" Value="11.5"/>
+                      </Style>
+                    </DataGridTextColumn.ElementStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="W px" Binding="{Binding W}" Width="58">
+                    <DataGridTextColumn.ElementStyle>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="TextAlignment" Value="Right"/>
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="FontSize" Value="11.5"/>
+                      </Style>
+                    </DataGridTextColumn.ElementStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="H px" Binding="{Binding H}" Width="58">
+                    <DataGridTextColumn.ElementStyle>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="TextAlignment" Value="Right"/>
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="FontSize" Value="11.5"/>
+                      </Style>
+                    </DataGridTextColumn.ElementStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Score" Binding="{Binding Score, StringFormat=F1}" Width="66">
+                    <DataGridTextColumn.ElementStyle>
+                      <Style TargetType="TextBlock">
+                        <Setter Property="TextAlignment" Value="Right"/>
+                        <Setter Property="FontFamily" Value="Consolas"/>
+                        <Setter Property="FontSize" Value="11.5"/>
+                      </Style>
+                    </DataGridTextColumn.ElementStyle>
+                  </DataGridTextColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+
+              <!-- 人工复判：终判决定良率口径，必须留人、留因、留原值 -->
+              <Border Grid.Row="7" Margin="0,10,0,0" Padding="12,10" CornerRadius="0"
+                      Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource LineBrush}"
+                      BorderThickness="1">
+                <StackPanel>
+                  <Grid Margin="0,0,0,8">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                      <Border Style="{StaticResource SectionMark}"/>
+                      <TextBlock Text="人工复判" Style="{StaticResource SectionTitle}"/>
+                    </StackPanel>
+                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center"
+                               Text="{Binding ReviewStatusText}" FontSize="11"
+                               Foreground="{StaticResource MutedBrush}"
+                               TextTrimming="CharacterEllipsis" MaxWidth="260"/>
+                  </Grid>
+
+                  <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto"/>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                      <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="结论" Style="{StaticResource MicroLabel}" VerticalAlignment="Center"
+                               Margin="0,0,6,0"/>
+                    <ComboBox Grid.Column="1" Height="28" ItemsSource="{Binding DecisionItems}"
+                              SelectedIndex="{Binding DecisionIndex}" IsEnabled="{Binding CanReview}"
+                              Margin="0,0,14,0"/>
+                    <TextBlock Grid.Column="2" Text="原因码" Style="{StaticResource MicroLabel}"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <ComboBox Grid.Column="3" Height="28" ItemsSource="{Binding ReasonItems}"
+                              SelectedIndex="{Binding ReasonIndex}" IsEnabled="{Binding CanReview}"/>
+                  </Grid>
+
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*"/>
+                      <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Height="30" Text="{Binding ReviewNote, UpdateSourceTrigger=PropertyChanged}"
+                             IsEnabled="{Binding CanReview}" ToolTip="备注（可选，随复判记入审计）"/>
+                    <Button Grid.Column="1" Content="提交复判" Height="30" Padding="14,0"
+                            Margin="10,0,0,0" Style="{StaticResource PrimaryButton}"
+                            Command="{Binding SubmitReviewCommand}" IsEnabled="{Binding CanReview}"
+                            ToolTip="写 reviews + 回写终判 + 审计；作废与故障记录不可复判"/>
+                  </Grid>
+                </StackPanel>
+              </Border>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

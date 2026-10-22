@@ -1,0 +1,1381 @@
+﻿{
+    "dataset":  "DeepPCB",
+    "source":  "https://github.com/tangsanli5201/DeepPCB",
+    "paper":  "Tang et al., Online PCB defect detector on a new PCB defect dataset, arXiv:1902.06197",
+    "licenseNote":  "非商用可用；商用须联系作者。大数据不进 git。",
+    "committedTypes":  [
+                           "open",
+                           "mousebite"
+                       ],
+    "typeIds":  {
+                    "mousebite":  3,
+                    "open":  1
+                },
+    "maxPairs":  100,
+    "bboxApproxNote":  "金标为 bbox→区域近似，不是像素级工业封样。",
+    "gate":  {
+                 "perClass":  true,
+                 "missMax":  0.2,
+                 "overkillMax":  0.5
+             },
+    "note":  "pairs 与同目录 *.txt 一致；仅承诺 open=1 / mousebite=3。00041000 含 type=1 与 type=3。",
+    "pairs":  [
+                  {
+                      "stem":  "00041000",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             539,
+                                             259,
+                                             592,
+                                             316
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  466,
+                                                  441,
+                                                  493,
+                                                  470
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041001",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             540,
+                                             140,
+                                             571,
+                                             182
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  342,
+                                                  492,
+                                                  375,
+                                                  521
+                                              ],
+                                              [
+                                                  459,
+                                                  73,
+                                                  490,
+                                                  103
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041003",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             335,
+                                             265,
+                                             374,
+                                             330
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  453,
+                                                  270,
+                                                  484,
+                                                  301
+                                              ],
+                                              [
+                                                  433,
+                                                  404,
+                                                  464,
+                                                  439
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041004",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             469,
+                                             438,
+                                             507,
+                                             465
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  465,
+                                                  173,
+                                                  495,
+                                                  202
+                                              ],
+                                              [
+                                                  224,
+                                                  78,
+                                                  254,
+                                                  106
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041005",
+                      "hasOpen":  true,
+                      "hasMousebite":  false,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             194,
+                                             429,
+                                             244,
+                                             482
+                                         ],
+                                         [
+                                             493,
+                                             429,
+                                             528,
+                                             484
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+
+                                          ]
+                  },
+                  {
+                      "stem":  "00041006",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             292,
+                                             430,
+                                             338,
+                                             487
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  281,
+                                                  233,
+                                                  313,
+                                                  273
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041007",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             513,
+                                             376,
+                                             549,
+                                             402
+                                         ],
+                                         [
+                                             530,
+                                             498,
+                                             571,
+                                             557
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  200,
+                                                  260,
+                                                  233,
+                                                  286
+                                              ],
+                                              [
+                                                  143,
+                                                  392,
+                                                  174,
+                                                  421
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041008",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             402,
+                                             115,
+                                             469,
+                                             158
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  455,
+                                                  178,
+                                                  495,
+                                                  205
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041009",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             520,
+                                             453,
+                                             559,
+                                             486
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  187,
+                                                  445,
+                                                  219,
+                                                  472
+                                              ],
+                                              [
+                                                  272,
+                                                  258,
+                                                  309,
+                                                  289
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041010",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             202,
+                                             402,
+                                             259,
+                                             445
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  80,
+                                                  179,
+                                                  119,
+                                                  204
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041011",
+                      "hasOpen":  true,
+                      "hasMousebite":  false,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           4,
+                                           5
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             287,
+                                             386,
+                                             323,
+                                             439
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+
+                                          ]
+                  },
+                  {
+                      "stem":  "00041012",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           5
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             212,
+                                             508,
+                                             247,
+                                             537
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  316,
+                                                  582,
+                                                  353,
+                                                  609
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041013",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             161,
+                                             341,
+                                             226,
+                                             381
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  279,
+                                                  337,
+                                                  317,
+                                                  366
+                                              ],
+                                              [
+                                                  106,
+                                                  217,
+                                                  138,
+                                                  247
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041014",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             521,
+                                             494,
+                                             551,
+                                             526
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  456,
+                                                  522,
+                                                  486,
+                                                  553
+                                              ],
+                                              [
+                                                  227,
+                                                  280,
+                                                  264,
+                                                  306
+                                              ],
+                                              [
+                                                  167,
+                                                  73,
+                                                  197,
+                                                  104
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041015",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             544,
+                                             124,
+                                             573,
+                                             156
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  263,
+                                                  151,
+                                                  300,
+                                                  178
+                                              ],
+                                              [
+                                                  395,
+                                                  224,
+                                                  433,
+                                                  250
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041016",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             177,
+                                             405,
+                                             221,
+                                             460
+                                         ],
+                                         [
+                                             348,
+                                             223,
+                                             386,
+                                             253
+                                         ],
+                                         [
+                                             402,
+                                             160,
+                                             438,
+                                             187
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  233,
+                                                  361,
+                                                  267,
+                                                  391
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041017",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             487,
+                                             117,
+                                             546,
+                                             148
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  129,
+                                                  190,
+                                                  160,
+                                                  219
+                                              ],
+                                              [
+                                                  108,
+                                                  254,
+                                                  141,
+                                                  285
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041018",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             230,
+                                             148,
+                                             276,
+                                             180
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  265,
+                                                  558,
+                                                  308,
+                                                  590
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041019",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             224,
+                                             295,
+                                             274,
+                                             354
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  325,
+                                                  320,
+                                                  359,
+                                                  354
+                                              ],
+                                              [
+                                                  38,
+                                                  273,
+                                                  70,
+                                                  305
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041020",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           4
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             505,
+                                             450,
+                                             565,
+                                             488
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  191,
+                                                  292,
+                                                  231,
+                                                  326
+                                              ],
+                                              [
+                                                  59,
+                                                  295,
+                                                  95,
+                                                  337
+                                              ],
+                                              [
+                                                  217,
+                                                  119,
+                                                  273,
+                                                  164
+                                              ],
+                                              [
+                                                  412,
+                                                  122,
+                                                  469,
+                                                  164
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041021",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             246,
+                                             508,
+                                             284,
+                                             537
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  445,
+                                                  396,
+                                                  477,
+                                                  429
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041022",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             188,
+                                             485,
+                                             236,
+                                             541
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  297,
+                                                  481,
+                                                  333,
+                                                  513
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041023",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             128,
+                                             184,
+                                             166,
+                                             212
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  277,
+                                                  274,
+                                                  316,
+                                                  304
+                                              ],
+                                              [
+                                                  212,
+                                                  511,
+                                                  254,
+                                                  546
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041024",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             154,
+                                             544,
+                                             188,
+                                             576
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  364,
+                                                  412,
+                                                  401,
+                                                  446
+                                              ],
+                                              [
+                                                  136,
+                                                  76,
+                                                  175,
+                                                  111
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041025",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             327,
+                                             152,
+                                             375,
+                                             209
+                                         ],
+                                         [
+                                             510,
+                                             30,
+                                             546,
+                                             61
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  58,
+                                                  152,
+                                                  96,
+                                                  185
+                                              ],
+                                              [
+                                                  54,
+                                                  89,
+                                                  92,
+                                                  120
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041026",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             319,
+                                             440,
+                                             355,
+                                             474
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  235,
+                                                  278,
+                                                  270,
+                                                  305
+                                              ],
+                                              [
+                                                  131,
+                                                  443,
+                                                  157,
+                                                  474
+                                              ],
+                                              [
+                                                  65,
+                                                  338,
+                                                  95,
+                                                  367
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041027",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             324,
+                                             379,
+                                             380,
+                                             404
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  122,
+                                                  303,
+                                                  157,
+                                                  333
+                                              ],
+                                              [
+                                                  182,
+                                                  443,
+                                                  218,
+                                                  472
+                                              ],
+                                              [
+                                                  324,
+                                                  338,
+                                                  362,
+                                                  367
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041028",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             259,
+                                             348,
+                                             287,
+                                             380
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  143,
+                                                  287,
+                                                  175,
+                                                  319
+                                              ],
+                                              [
+                                                  184,
+                                                  151,
+                                                  224,
+                                                  177
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041029",
+                      "hasOpen":  false,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           3,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  43,
+                                                  581,
+                                                  76,
+                                                  611
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041030",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             211,
+                                             252,
+                                             251,
+                                             287
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  172,
+                                                  59,
+                                                  207,
+                                                  89
+                                              ],
+                                              [
+                                                  104,
+                                                  212,
+                                                  139,
+                                                  237
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041031",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             337,
+                                             339,
+                                             378,
+                                             404
+                                         ],
+                                         [
+                                             28,
+                                             467,
+                                             56,
+                                             502
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  106,
+                                                  247,
+                                                  142,
+                                                  277
+                                              ],
+                                              [
+                                                  385,
+                                                  251,
+                                                  416,
+                                                  279
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041032",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             284,
+                                             126,
+                                             320,
+                                             154
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  76,
+                                                  60,
+                                                  114,
+                                                  85
+                                              ],
+                                              [
+                                                  421,
+                                                  120,
+                                                  448,
+                                                  153
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041033",
+                      "hasOpen":  true,
+                      "hasMousebite":  false,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             172,
+                                             390,
+                                             222,
+                                             447
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+
+                                          ]
+                  },
+                  {
+                      "stem":  "00041034",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             319,
+                                             224,
+                                             399,
+                                             270
+                                         ],
+                                         [
+                                             414,
+                                             109,
+                                             478,
+                                             144
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  268,
+                                                  89,
+                                                  306,
+                                                  116
+                                              ],
+                                              [
+                                                  357,
+                                                  315,
+                                                  405,
+                                                  353
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041035",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             353,
+                                             399,
+                                             420,
+                                             432
+                                         ],
+                                         [
+                                             188,
+                                             151,
+                                             226,
+                                             179
+                                         ],
+                                         [
+                                             283,
+                                             148,
+                                             320,
+                                             182
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  388,
+                                                  255,
+                                                  431,
+                                                  292
+                                              ],
+                                              [
+                                                  121,
+                                                  258,
+                                                  147,
+                                                  312
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041036",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             464,
+                                             279,
+                                             510,
+                                             339
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  179,
+                                                  338,
+                                                  211,
+                                                  370
+                                              ],
+                                              [
+                                                  41,
+                                                  312,
+                                                  98,
+                                                  351
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041037",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             409,
+                                             222,
+                                             468,
+                                             264
+                                         ],
+                                         [
+                                             446,
+                                             335,
+                                             497,
+                                             394
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  78,
+                                                  172,
+                                                  126,
+                                                  199
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041038",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             184,
+                                             503,
+                                             228,
+                                             537
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  395,
+                                                  48,
+                                                  424,
+                                                  86
+                                              ],
+                                              [
+                                                  268,
+                                                  281,
+                                                  321,
+                                                  317
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041039",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             431,
+                                             291,
+                                             491,
+                                             319
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  446,
+                                                  431,
+                                                  475,
+                                                  459
+                                              ]
+                                          ]
+                  },
+                  {
+                      "stem":  "00041040",
+                      "hasOpen":  true,
+                      "hasMousebite":  true,
+                      "typesPresent":  [
+                                           1,
+                                           2,
+                                           3,
+                                           4,
+                                           5,
+                                           6
+                                       ],
+                      "openBBoxes":  [
+                                         [
+                                             154,
+                                             409,
+                                             193,
+                                             440
+                                         ]
+                                     ],
+                      "mousebiteBBoxes":  [
+                                              [
+                                                  220,
+                                                  270,
+                                                  249,
+                                                  306
+                                              ],
+                                              [
+                                                  319,
+                                                  225,
+                                                  362,
+                                                  259
+                                              ],
+                                              [
+                                                  515,
+                                                  187,
+                                                  551,
+                                                  221
+                                              ]
+                                          ]
+                  }
+              ]
+}

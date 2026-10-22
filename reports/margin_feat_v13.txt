@@ -1,0 +1,22 @@
+file=features_20261021_060322.tsv rows=6762 matched=6651
+
+===== A. 边际特征的区分度（TP vs FP，全量） =====
+  m_open   TP mean=2.883 FP mean=2.876 | AUC=0.493
+  m_mb     TP mean=1.644 FP mean=1.892 | AUC=0.560
+  m_bite   TP mean=7.040 FP mean=7.765 | AUC=0.539
+  m_lat    TP mean=4.066 FP mean=2.344 | AUC=0.406
+  m_ph     TP mean=24.150 FP mean=25.500 | AUC=0.513
+  m_db     TP mean=7.831 FP mean=7.502 | AUC=0.492
+  m_parts  TP mean=1.025 FP mean=1.054 | AUC=0.509
+  m_short  TP mean=1.692 FP mean=1.931 | AUC=0.557
+  m_min    TP mean=0.806 FP mean=0.899 | AUC=0.570
+
+===== B. 5 折 CV：类内 AUC（严格 mAP 的排序面） =====
+  S4(17)     pooledOOF_AUC=0.8433 | OPEN:0.651(0.655) SHOR:0.789(0.777) MOUS:0.469(0.458) SPUR:0.478(0.475) COPP:0.790(0.801) PINH:0.728(0.769)
+  S4+m_min   pooledOOF_AUC=0.8478 | OPEN:0.641(0.655) SHOR:0.783(0.777) MOUS:0.451(0.458) SPUR:0.473(0.475) COPP:0.781(0.801) PINH:0.703(0.769)
+  S4+m_all   pooledOOF_AUC=0.8398 | OPEN:0.633(0.655) SHOR:0.863(0.777) MOUS:0.350(0.458) SPUR:0.580(0.475) COPP:0.891(0.801) PINH:0.486(0.769)
+
+===== C. 仿真严格 mAP11（v1.2.1 树 + OOF 置信度 vs S4） =====
+  S4           mAP11=87.34%  逐类=OPEN:89.3 SHOR:89.7 MOUS:77.6 SPUR:86.8 COPP:90.5 PINH:90.2
+  S4+m_min     mAP11=87.30%  逐类=OPEN:89.2 SHOR:89.8 MOUS:77.5 SPUR:86.9 COPP:90.5 PINH:89.9
+  S4+m_all     mAP11=87.14%  逐类=OPEN:89.0 SHOR:90.3 MOUS:77.1 SPUR:87.0 COPP:90.7 PINH:88.8

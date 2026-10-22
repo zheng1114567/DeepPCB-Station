@@ -1,0 +1,23 @@
+<Project>
+
+  <!--
+    全仓统一构建属性（L2）。以前这些配置散在四个 csproj 里各写各的，
+    测试项目漏配 Nullable 就直接导致 CS8632（"只能在 #nullable 上下文内使用可空注解"）——
+    同一份代码在不同项目里语义不一致，正是需要收敛到一处的原因。
+  -->
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+
+    <!-- 全仓代码已普遍使用 string? / T? 标注（四态判定、复判、DB 行都是可空字段），
+         统一启用注解 + 警告上下文，避免"这个项目认、那个项目不认"。 -->
+    <Nullable>enable</Nullable>
+
+    <!--
+      生成 packages.lock.json：把还原结果固定下来，clone 后能还原出同一套依赖版本。
+      注意：这里**不开** RestoreLockedMode（CI 严格锁），否则换环境加包会直接失败；
+      当前目标是"可复现 + 可看见版本变化"，不是"禁止变化"。
+    -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+</Project>

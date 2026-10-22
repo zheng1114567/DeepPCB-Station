@@ -1,0 +1,436 @@
+<UserControl x:Class="DeepPCBStation.Views.StatsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="clr-namespace:DeepPCBStation.Controls">
+  <UserControl.Resources>
+    <conv:PlotBarHeightConverter x:Key="BarHeightConv"/>
+    <conv:PlotBarLabelMarginConverter x:Key="BarLabelMarginConv"/>
+    <conv:DailyYieldLineConverter x:Key="YieldLineConv"/>
+    <conv:PlotBarWidthConverter x:Key="BarWidthConv"/>
+    <conv:PlotYieldDotMarginConverter x:Key="YieldDotMarginConv"/>
+    <conv:PlotTargetBandConverter x:Key="TargetBandConv"/>
+  </UserControl.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <!-- 筛选条 -->
+    <Border Grid.Row="0" Style="{StaticResource Card}" Padding="10,8">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <WrapPanel Grid.Column="0" VerticalAlignment="Center">
+          <TextBlock Text="日期" Style="{StaticResource MicroLabel}" Margin="0,0,6,0"/>
+          <DatePicker Width="132" SelectedDate="{Binding FromDate}" ToolTip="起始日期（空=不限）"/>
+          <TextBlock Text="—" Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center" Margin="6,0"/>
+          <DatePicker Width="132" SelectedDate="{Binding ToDate}" ToolTip="截止日期（空=不限）"/>
+          <Button Content="今日" Height="28" Padding="10,0" Margin="10,0,0,0" FontSize="11"
+                  Command="{Binding RangeTodayCommand}" ToolTip="起始=截止=今天并查询"/>
+          <Button Content="近 7 天" Height="28" Padding="10,0" Margin="4,0,0,0" FontSize="11"
+                  Command="{Binding RangeWeekCommand}"/>
+          <Button Content="近 30 天" Height="28" Padding="10,0" Margin="4,0,0,0" FontSize="11"
+                  Command="{Binding RangeMonthCommand}"/>
+          <TextBlock Text="配方" Style="{StaticResource MicroLabel}" Margin="16,0,6,0"/>
+          <ComboBox Width="160" ItemsSource="{Binding RecipeItems}" SelectedIndex="{Binding RecipeIndex}"/>
+        </WrapPanel>
+
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+          <Button Content="查询" Height="32" Padding="20,0" Style="{StaticResource PrimaryButton}"
+                  Command="{Binding QueryCommand}"/>
+          <Button Content="导出 CSV" Height="32" Padding="14,0" Margin="8,0,0,0"
+                  Command="{Binding ExportCsvCommand}"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- KPI 条：产量与节拍（密度对齐上位机，不用大数字卡） -->
+    <Border Grid.Row="1" Style="{StaticResource Card}" Padding="0" Margin="0,8,0,0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Style="{StaticResource PanelHead}">
+          <TextBlock Text="产量与节拍" FontSize="11" FontWeight="SemiBold"
+                     Foreground="{StaticResource InkSoftBrush}" VerticalAlignment="Center"/>
+        </Border>
+        <UniformGrid Grid.Row="1" Columns="6" Margin="0,7,0,7">
+          <StackPanel Margin="10,0,6,0">
+            <TextBlock Text="总数" Style="{StaticResource MicroLabel}"/>
+            <TextBlock Text="{Binding KpiTotal}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0">
+            <StackPanel Orientation="Horizontal">
+              <Border Width="8" Height="8" Background="{StaticResource OkBrush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+              <TextBlock Text="OK" Style="{StaticResource MicroLabel}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding KpiOk}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0">
+            <StackPanel Orientation="Horizontal">
+              <Border Width="8" Height="8" Background="{StaticResource NgBrush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+              <TextBlock Text="NG" Style="{StaticResource MicroLabel}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding KpiNg}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0">
+            <StackPanel Orientation="Horizontal">
+              <Border Width="8" Height="8" Background="{StaticResource WarnBrush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+              <TextBlock Text="FAULT" Style="{StaticResource MicroLabel}"/>
+            </StackPanel>
+            <TextBlock Text="{Binding KpiFault}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0">
+            <TextBlock Text="良率" Style="{StaticResource MicroLabel}"/>
+            <TextBlock Text="{Binding KpiYield}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource AccentBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0,10,0">
+            <TextBlock Text="平均节拍" Style="{StaticResource MicroLabel}"/>
+            <TextBlock Text="{Binding KpiAvgMs}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+        </UniformGrid>
+      </Grid>
+    </Border>
+
+    <!-- KPI 条：质量口径（复判闭环） -->
+    <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0,8,0,0">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="24"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Style="{StaticResource PanelHead}">
+          <TextBlock Text="质量口径" FontSize="11" FontWeight="SemiBold"
+                     Foreground="{StaticResource InkSoftBrush}" VerticalAlignment="Center"/>
+        </Border>
+        <UniformGrid Grid.Row="1" Columns="4" Margin="0,7,0,7">
+          <StackPanel Margin="10,0,6,0" ToolTip="首检即 OK ÷ (OK+NG)，不含 FAULT/VOID">
+            <TextBlock Text="FPY 直通率" Style="{StaticResource MicroLabel}"/>
+            <TextBlock Text="{Binding KpiFpy}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0" ToolTip="人工终判改判 OK ÷ 机器 NG（需先完成复判）">
+            <TextBlock Text="伪点率" Style="{StaticResource MicroLabel}"/>
+            <TextBlock Text="{Binding KpiFalseCall}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0" ToolTip="区间缺陷数 ÷ 有效板数 × 1,000,000">
+            <TextBlock Text="DPPM" Style="{StaticResource MicroLabel}"/>
+            <TextBlock Text="{Binding KpiDppm}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+          <StackPanel Margin="6,0,10,0" ToolTip="超时/断连后完成、不计良率的记录数">
+            <TextBlock Text="作废" Style="{StaticResource MicroLabel}"/>
+            <TextBlock Text="{Binding KpiVoid}" FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                       Foreground="{StaticResource InkBrush}" Margin="0,2,0,0"/>
+          </StackPanel>
+        </UniformGrid>
+      </Grid>
+    </Border>
+
+    <!-- 班次摘要（白班 08:00–20:00 / 夜班 20:00–08:00，按当前时间自动归班） -->
+    <Border Grid.Row="3" Style="{StaticResource Card}" Padding="10,6" Margin="0,8,0,0">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <Border Style="{StaticResource SectionMark}"/>
+        <TextBlock Text="本班" Style="{StaticResource SectionTitle}"/>
+        <TextBlock Text="{Binding ShiftTitle}" FontSize="11.5" Foreground="{StaticResource MutedBrush}"
+                   VerticalAlignment="Center" Margin="10,0,0,0"/>
+        <Border Width="1" Height="14" Background="{StaticResource LineBrush}" Margin="16,0"/>
+        <TextBlock Text="产量" Style="{StaticResource MicroLabel}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+        <TextBlock Text="{Binding ShiftCountText}" FontFamily="Consolas" FontSize="13" FontWeight="SemiBold"
+                   Foreground="{StaticResource InkBrush}" VerticalAlignment="Center"/>
+        <Border Width="1" Height="14" Background="{StaticResource LineBrush}" Margin="16,0"/>
+        <TextBlock Text="良率" Style="{StaticResource MicroLabel}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+        <TextBlock Text="{Binding ShiftYieldText}" FontFamily="Consolas" FontSize="13" FontWeight="SemiBold"
+                   Foreground="{StaticResource InkBrush}" VerticalAlignment="Center"/>
+      </StackPanel>
+    </Border>
+
+    <Grid Grid.Row="4" Margin="0,8,0,0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="1.55*"/>
+        <ColumnDefinition Width="12"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- 空态/失败态覆盖 -->
+      <TextBlock Grid.ColumnSpan="3" Panel.ZIndex="10" Text="{Binding EmptyText}" FontSize="14" HorizontalAlignment="Center"
+                 VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}">
+        <TextBlock.Style>
+          <Style TargetType="TextBlock">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding HasData}" Value="False">
+                <Setter Property="Visibility" Value="Visible"/>
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </TextBlock.Style>
+      </TextBlock>
+
+      <!-- 良率趋势 -->
+      <Border Grid.Column="0" Style="{StaticResource Card}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <Grid Grid.Row="0" Margin="0,0,0,14">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Border Style="{StaticResource SectionMark}"/>
+              <TextBlock Text="每日检测量与良率" Style="{StaticResource SectionTitle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+              <Border Width="8" Height="8" CornerRadius="0" Background="{StaticResource ChartBarBrush}"
+                      VerticalAlignment="Center"/>
+              <TextBlock Text="检测数" Style="{StaticResource MicroLabel}" Margin="5,0,14,0"/>
+              <Border Width="12" Height="2" Background="{StaticResource OkBrush}" VerticalAlignment="Center"/>
+              <TextBlock Text="良率" Style="{StaticResource MicroLabel}" Margin="5,0,14,0"/>
+              <Border Width="12" Height="2" Background="{StaticResource WarnBrush}" Opacity="0.6" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding TargetText}" Style="{StaticResource MicroLabel}" Margin="5,0,0,0"/>
+              <Button Content="导出图表" Height="24" Padding="9,0" FontSize="10.5" Margin="14,0,0,0"
+                      Click="OnExportChart" ToolTip="将图表与每日明细导出为 PNG"/>
+            </StackPanel>
+          </Grid>
+
+          <Grid x:Name="ChartHost" Grid.Row="1">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="1.6*"/>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 左轴：每日检测数 -->
+            <Grid Grid.Column="0" Width="38" Margin="0,0,8,19">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <TextBlock Text="{Binding CountAxisTop}" FontSize="10" Foreground="{StaticResource MutedBrush}"
+                         HorizontalAlignment="Right" VerticalAlignment="Top"/>
+              <TextBlock Grid.Row="1" Text="{Binding CountAxisMid}" FontSize="10" Foreground="{StaticResource MutedBrush}"
+                         HorizontalAlignment="Right" VerticalAlignment="Center"/>
+              <TextBlock Grid.Row="1" Text="0" FontSize="10" Foreground="{StaticResource MutedBrush}"
+                         HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            </Grid>
+
+            <Grid Grid.Column="1">
+              <!-- 网格线（与柱区对齐，底部留出日期标签） -->
+              <Grid x:Name="PlotArea" Margin="0,0,0,19" IsHitTestVisible="False">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="*"/>
+                  <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border VerticalAlignment="Top" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0"/>
+                <Border Grid.Row="1" VerticalAlignment="Top" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0"/>
+                <Border Grid.Row="1" VerticalAlignment="Bottom" BorderBrush="{StaticResource LineBrush}" BorderThickness="0,1,0,0"/>
+                <Border VerticalAlignment="Top" Height="1" Grid.RowSpan="2"
+                        Background="{StaticResource WarnBrush}" Opacity="0.45">
+                  <Border.Margin>
+                    <MultiBinding Converter="{StaticResource TargetBandConv}">
+                      <Binding Path="ActualHeight" ElementName="PlotArea"/>
+                      <Binding Path="TargetYieldPct"/>
+                    </MultiBinding>
+                  </Border.Margin>
+                </Border>
+              </Grid>
+
+              <ItemsControl ItemsSource="{Binding DailyBars}" VerticalAlignment="Stretch">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Rows="1"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid Margin="3,0" ToolTip="{Binding Tip}">
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                      </Grid.RowDefinitions>
+                      <Grid x:Name="BarArea" Grid.Row="0">
+                        <Border VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                                CornerRadius="0" Background="{StaticResource ChartBarBrush}">
+                          <Border.Width>
+                            <MultiBinding Converter="{StaticResource BarWidthConv}">
+                              <Binding Path="ActualWidth" ElementName="BarArea"/>
+                            </MultiBinding>
+                          </Border.Width>
+                          <Border.Height>
+                            <MultiBinding Converter="{StaticResource BarHeightConv}">
+                              <Binding Path="CountPct"/>
+                              <Binding Path="ActualHeight" ElementName="BarArea"/>
+                            </MultiBinding>
+                          </Border.Height>
+                        </Border>
+                        <TextBlock Text="{Binding Total}" FontSize="10"
+                                   Foreground="{StaticResource MutedBrush}" HorizontalAlignment="Center"
+                                   VerticalAlignment="Bottom" IsHitTestVisible="False">
+                          <TextBlock.Margin>
+                            <MultiBinding Converter="{StaticResource BarLabelMarginConv}">
+                              <Binding Path="CountPct"/>
+                              <Binding Path="ActualHeight" ElementName="BarArea"/>
+                            </MultiBinding>
+                          </TextBlock.Margin>
+                        </TextBlock>
+                        <Ellipse Width="7" Height="7" Fill="{StaticResource OkBrush}"
+                                 Stroke="#FFFFFF" StrokeThickness="1.5"
+                                 HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                                 IsHitTestVisible="False">
+                          <Ellipse.Margin>
+                            <MultiBinding Converter="{StaticResource YieldDotMarginConv}">
+                              <Binding Path="YieldPct"/>
+                              <Binding Path="ActualHeight" ElementName="BarArea"/>
+                            </MultiBinding>
+                          </Ellipse.Margin>
+                        </Ellipse>
+                      </Grid>
+                      <TextBlock Grid.Row="1" Text="{Binding DayText}" FontSize="10"
+                                 Foreground="{StaticResource MutedBrush}"
+                                 HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- 折线：每日良率 -->
+              <Polyline Stroke="{StaticResource OkBrush}" StrokeThickness="2" StrokeLineJoin="Round"
+                        Margin="0,0,0,19" IsHitTestVisible="False">
+                <Polyline.Points>
+                  <MultiBinding Converter="{StaticResource YieldLineConv}">
+                    <Binding Path="DailyBars"/>
+                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}"/>
+                    <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}"/>
+                  </MultiBinding>
+                </Polyline.Points>
+              </Polyline>
+            </Grid>
+
+            <!-- 右轴：良率 -->
+            <Grid Grid.Column="2" Width="42" Margin="8,0,0,19">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+              </Grid.RowDefinitions>
+              <TextBlock Text="100%" FontSize="10" Foreground="{StaticResource MutedBrush}"
+                         HorizontalAlignment="Left" VerticalAlignment="Top"/>
+              <TextBlock Grid.Row="1" Text="50%" FontSize="10" Foreground="{StaticResource MutedBrush}"
+                         HorizontalAlignment="Left" VerticalAlignment="Center"/>
+              <TextBlock Grid.Row="1" Text="0%" FontSize="10" Foreground="{StaticResource MutedBrush}"
+                         HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            </Grid>
+          </Grid>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,14,0,6">
+              <Border Style="{StaticResource SectionMark}"/>
+              <TextBlock Text="每日明细" Style="{StaticResource SectionTitle}"/>
+            </StackPanel>
+
+            <DataGrid Grid.Row="2" ItemsSource="{Binding DailyBars}" AutoGenerateColumns="False" IsReadOnly="True"
+                      Background="Transparent" BorderThickness="0"
+                      HorizontalScrollBarVisibility="Disabled">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="日期" Binding="{Binding Day}" Width="160"/>
+                <DataGridTextColumn Header="检测数" Binding="{Binding Total}" Width="100">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="TextAlignment" Value="Right"/>
+                      <Setter Property="FontFamily" Value="Consolas"/>
+                      <Setter Property="FontSize" Value="11.5"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="OK" Binding="{Binding Ok}" Width="100">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="TextAlignment" Value="Right"/>
+                      <Setter Property="FontFamily" Value="Consolas"/>
+                      <Setter Property="FontSize" Value="11.5"/>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="良率" Binding="{Binding YieldText}" Width="*">
+                  <DataGridTextColumn.ElementStyle>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="TextAlignment" Value="Right"/>
+                      <Setter Property="FontFamily" Value="Consolas"/>
+                      <Setter Property="FontSize" Value="11.5"/>
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding BelowTarget}" Value="True">
+                          <Setter Property="Foreground" Value="{StaticResource NgBrush}"/>
+                          <Setter Property="FontWeight" Value="SemiBold"/>
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+              </DataGrid.Columns>
+            </DataGrid>
+          </Grid>
+        </Grid>
+      </Border>
+
+      <!-- 缺陷 Pareto -->
+      <Border Grid.Column="2" Style="{StaticResource Card}">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+
+          <Grid Grid.Row="0" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Border Style="{StaticResource SectionMark}"/>
+              <TextBlock Text="缺陷类型 Pareto" Style="{StaticResource SectionTitle}"/>
+            </StackPanel>
+          </Grid>
+
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl ItemsSource="{Binding ParetoBars}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <DockPanel Margin="0,4" ToolTip="{Binding Count}">
+                    <TextBlock DockPanel.Dock="Left" Text="{Binding TypeCode}" Width="88" FontSize="11.5"
+                               VerticalAlignment="Center" FontFamily="Consolas"
+                               Foreground="{StaticResource InkSoftBrush}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding CumText}" Width="80" Margin="6,0,0,0"
+                               FontSize="10.5" Foreground="{StaticResource MutedBrush}"
+                               VerticalAlignment="Center" TextAlignment="Right"/>
+                    <TextBlock DockPanel.Dock="Right" Text="{Binding Count}" Width="44" Margin="6,0,0,0"
+                               FontSize="11.5" FontWeight="SemiBold" VerticalAlignment="Center" TextAlignment="Right"/>
+                    <Grid Height="16" VerticalAlignment="Center" Margin="0,0,4,0">
+                      <Border Background="#F1F3F6" CornerRadius="0" Width="240" HorizontalAlignment="Left"/>
+                      <Border Width="{Binding BarWidth}" Background="{StaticResource ChartBarBrush}"
+                              CornerRadius="0" HorizontalAlignment="Left"/>
+                    </Grid>
+                  </DockPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

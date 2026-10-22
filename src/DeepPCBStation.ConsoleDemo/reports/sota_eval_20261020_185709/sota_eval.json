@@ -1,0 +1,217 @@
+{
+  "Timestamp": "2026-10-20T18:57:09.8268834+08:00",
+  "RecipeId": "pcb_open_mousebite",
+  "RecipeVersion": "0.9.7",
+  "RecipeHash": "d9dc4d8b837de59da8ee80322bb7b70e",
+  "Engine": "Halcon",
+  "PairCount": 8,
+  "Classes": [
+    {
+      "Type": 1,
+      "Name": "open",
+      "GtCount": 8,
+      "PredCount": 13,
+      "TpStrict": 8,
+      "ApStrict": 0.88598901098901095,
+      "ApStrict11": 0.882117882117882
+    },
+    {
+      "Type": 2,
+      "Name": "short",
+      "GtCount": 4,
+      "PredCount": 4,
+      "TpStrict": 4,
+      "ApStrict": 1,
+      "ApStrict11": 1
+    },
+    {
+      "Type": 3,
+      "Name": "mousebite",
+      "GtCount": 7,
+      "PredCount": 2,
+      "TpStrict": 2,
+      "ApStrict": 0.2857142857142857,
+      "ApStrict11": 0.27272727272727271
+    },
+    {
+      "Type": 4,
+      "Name": "spur",
+      "GtCount": 8,
+      "PredCount": 8,
+      "TpStrict": 8,
+      "ApStrict": 1,
+      "ApStrict11": 1
+    },
+    {
+      "Type": 5,
+      "Name": "copper",
+      "GtCount": 6,
+      "PredCount": 6,
+      "TpStrict": 6,
+      "ApStrict": 1,
+      "ApStrict11": 1
+    },
+    {
+      "Type": 6,
+      "Name": "pinhole",
+      "GtCount": 6,
+      "PredCount": 6,
+      "TpStrict": 5,
+      "ApStrict": 0.75,
+      "ApStrict11": 0.74242424242424232
+    }
+  ],
+  "TotalGt": 39,
+  "TotalPred": 39,
+  "MapStrict": 0.82028388278388276,
+  "MapStrict11": 0.8162115662115661,
+  "StrictPrecision": 0.84615384615384615,
+  "StrictRecall": 0.84615384615384615,
+  "StrictF1": 0.84615384615384615,
+  "StrictTp": 33,
+  "MapIgnore": 0.95463510848126165,
+  "MapIgnore11": 0.89277389277389285,
+  "IgnorePrecision": 0.97435897435897434,
+  "IgnoreRecall": 0.97435897435897434,
+  "IgnoreF1": 0.97435897435897434,
+  "IgnoreTp": 38,
+  "HitsCenterOrIou": 39,
+  "HitsIouOnly": 38,
+  "HitsTypeAndIou": 33,
+  "Geometry": {
+    "GtTotal": 39,
+    "GtWithOverlap": 39,
+    "GtIouPass": 38,
+    "MedianBestIou": 0.59632034632034636,
+    "MedianGtArea": 1406,
+    "MedianPredArea": 1247,
+    "MedianSizeRatio": 0.94220756844806564,
+    "IouBuckets": [
+      0,
+      0,
+      0,
+      1,
+      7,
+      31
+    ],
+    "ContainedPred": 9,
+    "CoveringPred": 2,
+    "PerClass": [
+      {
+        "Type": 1,
+        "Name": "open",
+        "GtN": 8,
+        "MedianGtArea": 2295,
+        "MedianPredArea": 2668,
+        "MedianIoU": 0.66070401190595029,
+        "IoUPassRate": 100
+      },
+      {
+        "Type": 2,
+        "Name": "short",
+        "GtN": 4,
+        "MedianGtArea": 1611.5,
+        "MedianPredArea": 1760,
+        "MedianIoU": 0.63030388348136335,
+        "IoUPassRate": 100
+      },
+      {
+        "Type": 3,
+        "Name": "mousebite",
+        "GtN": 7,
+        "MedianGtArea": 1134,
+        "MedianPredArea": 1406,
+        "MedianIoU": 0.57792539601430759,
+        "IoUPassRate": 100
+      },
+      {
+        "Type": 4,
+        "Name": "spur",
+        "GtN": 8,
+        "MedianGtArea": 1269,
+        "MedianPredArea": 872,
+        "MedianIoU": 0.51614785992217893,
+        "IoUPassRate": 100
+      },
+      {
+        "Type": 5,
+        "Name": "copper",
+        "GtN": 6,
+        "MedianGtArea": 1303.5,
+        "MedianPredArea": 841,
+        "MedianIoU": 0.67443985697381281,
+        "IoUPassRate": 100
+      },
+      {
+        "Type": 6,
+        "Name": "pinhole",
+        "GtN": 6,
+        "MedianGtArea": 1536,
+        "MedianPredArea": 1152,
+        "MedianIoU": 0.58180247979766819,
+        "IoUPassRate": 83.333333333333329
+      }
+    ]
+  },
+  "GrowSweep": [
+    {
+      "Factor": 1,
+      "IgnoreTp": 38,
+      "IgnoreF1": 0.97435897435897434,
+      "MapIgnore11": 0.89277389277389285,
+      "StrictTp": 33,
+      "StrictF1": 0.84615384615384615
+    },
+    {
+      "Factor": 1.25,
+      "IgnoreTp": 39,
+      "IgnoreF1": 1,
+      "MapIgnore11": 1,
+      "StrictTp": 34,
+      "StrictF1": 0.87179487179487181
+    },
+    {
+      "Factor": 1.5,
+      "IgnoreTp": 39,
+      "IgnoreF1": 1,
+      "MapIgnore11": 1,
+      "StrictTp": 34,
+      "StrictF1": 0.87179487179487181
+    },
+    {
+      "Factor": 1.75,
+      "IgnoreTp": 23,
+      "IgnoreF1": 0.58974358974358976,
+      "MapIgnore11": 0.3802974545784959,
+      "StrictTp": 20,
+      "StrictF1": 0.51282051282051277
+    },
+    {
+      "Factor": 2,
+      "IgnoreTp": 17,
+      "IgnoreF1": 0.4358974358974359,
+      "MapIgnore11": 0.26365301365301369,
+      "StrictTp": 16,
+      "StrictF1": 0.41025641025641024
+    },
+    {
+      "Factor": 2.5,
+      "IgnoreTp": 3,
+      "IgnoreF1": 0.076923076923076927,
+      "MapIgnore11": 0.01948051948051948,
+      "StrictTp": 3,
+      "StrictF1": 0.076923076923076927
+    },
+    {
+      "Factor": 3,
+      "IgnoreTp": 1,
+      "IgnoreF1": 0.02564102564102564,
+      "MapIgnore11": 0.0101010101010101,
+      "StrictTp": 1,
+      "StrictF1": 0.02564102564102564
+    }
+  ],
+  "Warnings": [],
+  "ReportMdPath": "E:\\demo\\DeepPCB-Station\\src\\DeepPCBStation.ConsoleDemo\\reports\\sota_eval_20261020_185709\\sota_eval.md",
+  "ReportJsonPath": "E:\\demo\\DeepPCB-Station\\src\\DeepPCBStation.ConsoleDemo\\reports\\sota_eval_20261020_185709\\sota_eval.json"
+}

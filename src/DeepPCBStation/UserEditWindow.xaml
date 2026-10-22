@@ -1,0 +1,29 @@
+<Window x:Class="DeepPCBStation.UserEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="用户"
+        Width="400" Height="280"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{StaticResource BgBrush}" Foreground="{StaticResource FgBrush}"
+        FontFamily="Segoe UI, Microsoft YaHei UI">
+  <StackPanel Margin="20">
+    <TextBlock Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
+               FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12"/>
+    <TextBlock x:Name="UserLabel" Text="用户名" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4"/>
+    <TextBox x:Name="UserBox" Height="32" VerticalContentAlignment="Center" Margin="0,0,0,12"/>
+    <TextBlock x:Name="PwdLabel" Text="密码（至少 6 位）" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4"/>
+    <PasswordBox x:Name="PwdBox" Height="32" VerticalContentAlignment="Center" Margin="0,0,0,12"/>
+    <TextBlock Text="角色" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,0,0,4"/>
+    <ComboBox x:Name="RoleBox" Height="30" Margin="0,0,0,16">
+      <ComboBoxItem Content="操作员 Operator" Tag="Operator"/>
+      <ComboBoxItem Content="工程师 Engineer" Tag="Engineer"/>
+      <ComboBoxItem Content="管理员 Admin" Tag="Admin"/>
+    </ComboBox>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button Content="取消" Width="76" Height="30" Margin="0,0,8,0" IsCancel="True"/>
+      <Button Content="确定" Width="76" Height="30" Style="{StaticResource PrimaryButton}" IsDefault="True"
+              Click="Ok_Click"/>
+    </StackPanel>
+  </StackPanel>
+</Window>

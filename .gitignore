@@ -1,0 +1,79 @@
+bin/
+obj/
+results/
+*.user
+*.suo
+.vs/
+*.pdf
+*.zip
+license.dat
+
+# 金标报告保留最新与带时间戳；其它临时物忽略
+reports/*
+!reports/golden_*.md
+!reports/golden_*.json
+!reports/golden_latest.md
+!reports/golden_latest.json
+
+# 对外「据实」证据（H7）：v1.2.1 官方 test / train1000 运行日志、四集旧金标基线、
+# 证伪与扫描报告。全部为小文本（≤36KB），clone 后即可核对 README/QUALITY_DEBT 口径。
+# 注意 git 规则：父目录被 reports/* 排除时，必须先解除目录排除再放行其中文件。
+!reports/v121_official.log
+!reports/v121_train1000.log
+!reports/v121_golden_external.log
+!reports/v121_golden_holdout.log
+!reports/v121_golden_mixed.log
+!reports/v121_golden_samples.log
+!reports/z_four_external/
+!reports/z_four_external/golden_latest.md
+!reports/z_four_external/golden_latest.json
+!reports/z_four_holdout/
+!reports/z_four_holdout/golden_latest.md
+!reports/z_four_holdout/golden_latest.json
+!reports/z_four_mixed/
+!reports/z_four_mixed/golden_latest.md
+!reports/z_four_mixed/golden_latest.json
+!reports/z_four_samples/
+!reports/z_four_samples/golden_latest.md
+!reports/z_four_samples/golden_latest.json
+!reports/dl_rescue_falsification.md
+!reports/lopdepth_falsification.md
+!reports/residue_grow_falsification.md
+!reports/residue_grow_design.md
+!reports/workpoint_sweep_report.md
+!reports/workpoint_sweep.log
+!reports/lopdepth_sweep.log
+!reports/texture_separability.md
+!reports/mother_rescue_report.md
+!reports/tree_cmp_v121.txt
+!reports/featpool_v13.txt
+!reports/margin_feat_v13.txt
+
+# 大数据勿进仓；≤100 对小样允许 data/samples 下的 jpg/txt
+data/full/
+data/raw/
+
+# 会话/记忆数据，不对外发布
+.workbuddy/
+
+# 数据集与派生产物一律不入库，只保留 data/samples 小样
+data/*
+!data/samples/
+!data/samples/**
+
+# 实验模型与调试 dump 不入库
+*.pt
+# L1：tools/ 下的一次性产物（构建日志、结果转储、随手脚本）不入库；
+# 29 个 .py 与 tools/verify.ps1（回归门）保留——它们是工具，不是产物。
+tools/*.txt
+tools/*.log
+tools/dl.ps1
+__pycache__/
+*.pyc
+
+# 内部求职口径与规划，不对外发布
+docs/_internal/
+
+# 模型文件不入库（按 docs 脚本导出）
+*.onnx
+models/
